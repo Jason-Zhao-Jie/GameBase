@@ -26,6 +26,7 @@
         "endLevel": 1,
         "jokerAfterEndLevel": false,
         "mainColorGetWay": 1,
+        "forceSendJokerLastCardsNum": 2,
         "lastCardsScoreDouble": false,
         "fullScore": 120,
         "fullScoreGotMain": true,

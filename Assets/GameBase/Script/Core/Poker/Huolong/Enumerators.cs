@@ -11,8 +11,9 @@ namespace GameBase.Core.Poker.Huolong
     {
         Idle,
         Starting,
-        GivingHandCards,
-        GivingLastCards,
+        GivingHandCards,    // 发牌中
+        GivingLastCards,    // 确认底牌中
+        SendingLastCards,   // 埋底中
         Rounding,
     }
 
@@ -61,7 +62,6 @@ namespace GameBase.Core.Poker.Huolong
 
         ShowStar_CannotShow,         // 此时不能亮王
         ShowStar_CardsNotEnough,     // 你所要亮的大王牌数量不达要求
-        ShowStar_CardsYouDonnotHave, // 你没有你所声称的那么多大王牌
 
         LastCards_CannotThrow,      // 此时不能埋底
         LastCards_Repeated,         // 埋底牌数组里出现重复牌

@@ -13,6 +13,7 @@ namespace GameBase.Core.Poker.Huolong
         public int endLevel;
         public bool jokerAfterEndLevel;
         public MainColorGetWay mainColorGetWay;
+        public int forceSendJokerLastCardsNum;
         public bool lastCardsScoreDouble;
         public int fullScore;
         public bool fullScoreGotMain;

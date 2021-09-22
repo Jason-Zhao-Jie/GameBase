@@ -55,6 +55,18 @@ namespace GameBase.Core.Poker
             return card % 1000;
         }
 
+        public static int GetNextPoint(int point)
+        {
+            if(point == 13)
+            {
+                return 1;
+            }
+            else
+            {
+                return point + 1;
+            }
+        }
+
         public static string ColorToString(int card)
         {
             switch (GetColor(card))

@@ -84,6 +84,56 @@ namespace GameBase.Core.Poker.Huolong
             return 0;
         }
 
+        public static int CompareAsLastCards(int a, int b, CardColor mainColor, int mainPoint, int oftenMainPoint)
+        {
+            var colorA = Poker.Helper.GetColor(a);
+            var colorB = Poker.Helper.GetColor(b);
+            var scoreA = Poker.Helper.GetScore(a);
+            var scoreB = Poker.Helper.GetScore(b);
+            if (colorA == CardColor.Joker)
+            {
+                if (colorB == CardColor.Joker)
+                {
+                    return Poker.Helper.GetPoint(b) - Poker.Helper.GetPoint(a);
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+            else if (colorB == CardColor.Joker)
+            {
+                return -1;
+            }
+            else if (scoreA != scoreB)
+            {
+                return scoreA - scoreB;
+            }
+            else
+            {
+                var powerA = GetCardPowerLevel(a, mainColor, mainPoint, oftenMainPoint);
+                var powerB = GetCardPowerLevel(b, mainColor, mainPoint, oftenMainPoint);
+                if (powerA != powerB)
+                {
+                    return powerA - powerB;
+                }
+                else
+                {
+                    var pointA = Poker.Helper.GetPoint(a);
+                    var pointB = Poker.Helper.GetPoint(b);
+                    if (pointA == 1)
+                    {
+                        pointA = 14;
+                    }
+                    if (pointB == 1)
+                    {
+                        pointB = 14;
+                    }
+                    return pointA - pointB;
+                }
+            }
+        }
+
         private static int GetCardPowerLevel(int card, CardColor mainColor, int mainPoint, int oftenMainPoint)
         {
             var color = Poker.Helper.GetColor(card);

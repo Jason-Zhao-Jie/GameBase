@@ -72,6 +72,18 @@ namespace GameBase.Core.Poker
             }
         }
 
+        public int[] GetAll()
+        {
+            return cards.ToArray();
+        }
+
+        public int[] PopAll()
+        {
+            var ret = cards.ToArray();
+            cards.Clear();
+            return ret;
+        }
+
         public void Clear()
         {
             cards.Clear();
