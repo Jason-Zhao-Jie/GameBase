@@ -2,18 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameBase.Core.Poker
 {
-    public class CardLayout
+    public class CardLayout : IEnumerator<int>, IList<int>
     {
         protected List<int> cards;
 
         public CardLayout()
         {
             cards = new List<int>();
+            Current = 0;
         }
 
         public int Count
@@ -31,13 +30,29 @@ namespace GameBase.Core.Poker
                 var ret = 0;
                 if (cards.Count != 0)
                 {
-                    foreach (var c in this.cards)
+                    foreach (var c in cards)
                     {
                         ret += Helper.GetScore(c);
                     }
                 }
                 return ret;
             }
+        }
+
+        public int Current
+        {
+            get;
+            protected set;
+        }
+
+        object IEnumerator.Current => Current;
+
+        public bool IsReadOnly => false;
+
+        public int this[int index]
+        {
+            get => cards[index];
+            set => cards[index] = value;
         }
 
         public void Init(int group)
@@ -49,11 +64,7 @@ namespace GameBase.Core.Poker
 
                 for (CardColor c = CardColor.Spades; c < CardColor.Joker; ++c)
                 {
-                    for (int p = 0; p < 10; ++p)
-                    {
-                        cards.Add(Helper.GetCardId(c, p + 1, i));
-                    }
-                    for (int p = 10; p < 13; ++p)
+                    for (int p = 0; p < 13; ++p)
                     {
                         cards.Add(Helper.GetCardId(c, p + 1, i));
                     }
@@ -190,5 +201,66 @@ namespace GameBase.Core.Poker
             return ret.ToArray();
         }
 
+        public bool MoveNext()
+        {
+            if (Current >= cards.Count)
+            {
+                return false;
+            }
+            else
+            {
+                ++Current;
+                return true;
+            }
+        }
+
+        public void Reset()
+        {
+            Current = 0;
+        }
+
+        public void Dispose()
+        {
+        }
+
+        public IEnumerator<int> GetEnumerator()
+        {
+            return this;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this;
+        }
+
+        public int IndexOf(int item)
+        {
+            return cards.IndexOf(item);
+        }
+
+        public void Insert(int index, int item)
+        {
+            cards.Insert(index, item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            cards.RemoveAt(index);
+        }
+
+        public void Add(int item)
+        {
+            cards.Add(item);
+        }
+
+        public void CopyTo(int[] array, int arrayIndex)
+        {
+            cards.CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(int item)
+        {
+            return cards.Remove(item);
+        }
     }
 }

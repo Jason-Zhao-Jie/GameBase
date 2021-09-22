@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace GameBase.Core
 {
+    [System.Serializable]
     public class CharacterInfo
     {
         public int id;

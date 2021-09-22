@@ -21,7 +21,7 @@
         "campNum": 2,
         "groupNum": 3,
         "lastCardsNum": 6,
-        "is2ConstantMain": true,
+        "isConstantMain": true,
         "startLevel": 3,
         "endLevel": 1,
         "jokerAfterEndLevel": false,
