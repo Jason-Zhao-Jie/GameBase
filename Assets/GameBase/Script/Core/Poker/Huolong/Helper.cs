@@ -52,6 +52,10 @@ namespace GameBase.Core.Poker.Huolong
 
         public static int CompareAsThrewCards(CardLayout a, CardLayout b, CardColor mainColor, int mainPoint, int oftenMainPoint)
         {
+            if (mainPoint == 0)
+            {
+                mainColor = CardColor.Joker;
+            }
             var failA = a.GetIsAllSame() ? 1 : 0;
             var failB = b.GetIsAllSame() ? 1 : 0;
             if(failA!=1 || failB != 1)
@@ -86,6 +90,10 @@ namespace GameBase.Core.Poker.Huolong
 
         public static int CompareAsLastCards(int a, int b, CardColor mainColor, int mainPoint, int oftenMainPoint)
         {
+            if(mainPoint == 0)
+            {
+                mainColor = CardColor.Joker;
+            }
             var colorA = Poker.Helper.GetColor(a);
             var colorB = Poker.Helper.GetColor(b);
             var scoreA = Poker.Helper.GetScore(a);

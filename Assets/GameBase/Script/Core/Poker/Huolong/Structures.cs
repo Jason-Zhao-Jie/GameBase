@@ -16,8 +16,7 @@ namespace GameBase.Core.Poker.Huolong
         public int forceSendJokerLastCardsNum;
         public bool lastCardsScoreDouble;
         public int fullScore;
-        public bool fullScoreGotMain;
-        public bool lastCardsGotMain;
+        public WinMatchWay winMatchWay;
         public int noHalfScroreAddUpgrade;
         public int noScoreAddUpgrade;
         public int joker1AddUpgrade;
@@ -30,8 +29,8 @@ namespace GameBase.Core.Poker.Huolong
         public bool downgradeByJoker2;
         public bool downgradeByMainCP;
         public bool downgradeByUnMainCP;
-        public bool downgradeByMain2;
-        public bool downgradeByUnMain2;
+        public bool downgradeByMainConstantMain;
+        public bool downgradeByUnMainConstantMain;
         public bool recordThisMatch;
         public float firstRoundGiveCardsDelay;
         public int aroundOverDelay;
@@ -50,6 +49,7 @@ namespace GameBase.Core.Poker.Huolong
     {
         public int roundIndex;
         public int[][] threwCards;
+        public int leader;
         public int winner;
         public int score;
     }
@@ -59,7 +59,7 @@ namespace GameBase.Core.Poker.Huolong
     {
         public int matchIndex;
         public int winner;
-        public int totalScore;
+        public int[] totalScore;
         public int[] lastCards;
         public int[][] finallyThrew;
         public int oldMainPlayer;
@@ -67,6 +67,7 @@ namespace GameBase.Core.Poker.Huolong
         public int[] oldLevels;
         public int[] newLevels;
         public int upgradedLevelNumber;
+        public bool gameover;
     }
 
     [System.Serializable]

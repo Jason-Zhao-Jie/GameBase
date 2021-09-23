@@ -81,15 +81,23 @@ namespace GameBase.Core.Poker.Huolong
 
     public enum MainColorGetWay
     {
-        AllRandom,
-        FirstMatchShowStar,
-        FirstMatchShowMain,
-        EveryMatchShowStar,
-        EveryMatchShowMain,
-        EveryMatchRandom,
-        RandomMainPlayerWithColorSpade,
-        RandomMainPlayerWithColorHeart,
-        RandomMainPlayerWithColorCube,
-        RandomMainPlayerWithColorDiamond,
+        AllRandom,              // 首庄随机，主花色随机固定
+        FirstMatchShowStar,     // 首局亮王决定
+        FirstMatchShowMain,     // 首局亮主打牌决定
+        EveryMatchShowStar,     // 每局亮王改主花色
+        EveryMatchShowMain,     // 枚局亮主打牌决定主花色
+        EveryMatchRandom,       // 首庄随机，主花色每局随机
+        RandomMainPlayerWithColorSpade,     // 首庄随机，主花色固定为黑桃
+        RandomMainPlayerWithColorHeart,     // 首庄随机，主花色固定为红桃
+        RandomMainPlayerWithColorCube,      // 首庄随机，主花色固定为草花
+        RandomMainPlayerWithColorDiamond,   // 首庄随机，主花色固定为方片
+    }
+
+    public enum WinMatchWay
+    {
+        GotLastCards,
+        FullMostScore,
+        GotLastCardsAndFullScore,
+        GotLastCardsOrFullMostScore,
     }
 }

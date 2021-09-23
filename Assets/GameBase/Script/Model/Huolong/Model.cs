@@ -20,7 +20,6 @@ namespace GameBase.Model.Huolong
 
         public CardColor MainColor { get; private set; } = CardColor.Unknown;
         public int MatchIndex { get; private set; } = 0;
-        public int Score { get; private set; } = 0;
         public int RoundIndex { get; private set; } = 0;
         public int CurrentCamp { get; private set; } = 0;
         public int MainPoint => level[CurrentCamp];
@@ -50,6 +49,11 @@ namespace GameBase.Model.Huolong
             return level[camp];
         }
 
+        public int GetCampScore(int camp)
+        {
+            return level[camp];
+        }
+
         public CardLayout GetPlayerCardLayout(int player)
         {
             return playerCardLayout[player];
@@ -68,9 +72,15 @@ namespace GameBase.Model.Huolong
         public void InitGame(GameSetting s)
         {
             settings = s;
-            mainPlayers = new int[s.playerNum];
+            mainPlayers = new int[s.campNum];
             level = new int[s.campNum];
+            for (int i = 0; i < s.campNum; ++i)
+            {
+                mainPlayers[i] = i;
+                level[i] = s.startLevel;
+            }
             mainCardLayout = new CardLayout();
+            mainCardLayout.Init(settings.groupNum);
             lastCardLayout = new CardLayout();
             roundCardLayout = new CardLayout[s.playerNum];
             playerCardLayout = new CardLayout[s.playerNum];
@@ -89,9 +99,23 @@ namespace GameBase.Model.Huolong
                 return false;
             }
             MatchIndex = matchIndex;
+            RoundIndex = 0;
+            LeadPlayer = MainPlayer;
+            CurrentPlayer = MainPlayer;
+            ShowingPlayer = MainPlayer;
+            ShowedPlayer = MainPlayer;
+            score = new int[settings.campNum];
             showingCards = new int[0];
             showedCards = new int[0];
-            mainCardLayout.Init(settings.groupNum);
+            mainCardLayout.PushCard(lastCardLayout.PopAll());
+            foreach (var p in roundCardLayout)
+            {
+                mainCardLayout.PushCard(p.PopAll());
+            }
+            foreach (var p in playerCardLayout)
+            {
+                mainCardLayout.PushCard(p.PopAll());
+            }
             mainCardLayout.RandomAllCards();
             MatchState = MatchState.Starting;
             return true;
@@ -132,23 +156,98 @@ namespace GameBase.Model.Huolong
             return SendCardsToLast();
         }
 
-        public GameOperationResponse SetWillShowJoker(int player)
+        /// <summary>
+        /// 本局发牌时是否允许亮牌
+        /// </summary>
+        public bool AllowShow
+        {
+            get
+            {
+                switch (settings.mainColorGetWay)
+                {
+                    case MainColorGetWay.EveryMatchShowStar:
+                    case MainColorGetWay.EveryMatchShowMain:
+                        return MainPoint != 0;
+                    case MainColorGetWay.FirstMatchShowStar:
+                    case MainColorGetWay.FirstMatchShowMain:
+                        return MatchIndex == 0;
+                    default:
+                        return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 是否以亮主打牌代替亮王牌
+        /// </summary>
+        public bool IsShowMainPoint
+        {
+            get
+            {
+                switch (settings.mainColorGetWay)
+                {
+                    case MainColorGetWay.EveryMatchShowMain:
+                        return MainPoint != 0;
+                    case MainColorGetWay.FirstMatchShowMain:
+                        return MatchIndex == 0;
+                    default:
+                        return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 亮牌，根据设置需要亮王牌或者主牌。亮主牌则直接操作，亮王牌需要等下一轮摸牌
+        /// </summary>
+        /// <param name="player"> 亮牌操作的玩家 </param>
+        /// <param name="color"> 亮主牌时的花色，亮王牌无须此参数 </param>
+        /// <returns></returns>
+        public GameOperationResponse SetShow(int player, CardColor color = CardColor.Joker)
         {
             // 检查时机
-            if (GameState != GameState.GameRunning || MatchState != MatchState.GivingHandCards)
+            if (GameState != GameState.GameRunning || MatchState != MatchState.GivingHandCards || !AllowShow)
             {
-                // todo 还要判断这是不是允许亮王的对局
                 return GameOperationResponse.ShowStar_CannotShow;
             }
             // 检查玩家王牌数量
-            var num = playerCardLayout[player].GetColorPointNum(Core.Poker.Helper.Joker1);
-            if (num < showedCards.Length || num <= showingCards.Length)
+            int num;
+            int card = Core.Poker.Helper.Joker1;
+            if (IsShowMainPoint)
+            {
+                card = Core.Poker.Helper.GetCardId(color, MainPoint);
+                num = playerCardLayout[player].GetColorPointNum(card);
+            }
+            else
+            {
+                num = playerCardLayout[player].GetColorPointNum(Core.Poker.Helper.Joker1);
+            }
+            if (num <= showedCards.Length || num <= showingCards.Length)
             {
                 return GameOperationResponse.ShowStar_CardsNotEnough;
             }
-            // 成功, 执行数据记录
-            ShowingPlayer = player;
-            showingCards = playerCardLayout[player].GetColorPointCards(Core.Poker.Helper.Joker1);
+            if (IsShowMainPoint)
+            {
+                ShowedPlayer = player;
+                showedCards = playerCardLayout[player].GetColorPointCards(card);
+                switch (settings.mainColorGetWay)
+                {
+                    case MainColorGetWay.FirstMatchShowMain:
+                    case MainColorGetWay.EveryMatchShowMain:
+                        MainColor = color;
+                        if (MatchIndex == 0)
+                        {
+                            CurrentCamp = player % settings.campNum;
+                            mainPlayers[CurrentCamp] = player;
+                        }
+                        break;
+                }
+            }
+            else
+            {
+                // 成功, 执行数据记录
+                ShowingPlayer = player;
+                showingCards = playerCardLayout[player].GetColorPointCards(card);
+            }
             return GameOperationResponse.Success;
         }
 
@@ -174,7 +273,18 @@ namespace GameBase.Model.Huolong
                 showedCards = newCards;
                 showingCards = new int[0];
                 ShowedPlayer = player;
-                // todo 判断配置和局数, 决定是否设定新的庄家
+                switch (settings.mainColorGetWay)
+                {
+                    case MainColorGetWay.FirstMatchShowMain:
+                    case MainColorGetWay.EveryMatchShowMain:
+                        MainColor = color;
+                        if (MatchIndex == 0)
+                        {
+                            CurrentCamp = player % settings.campNum;
+                            mainPlayers[CurrentCamp] = player;
+                        }
+                        break;
+                }
             }
             // 返回 true 后, 通过判断新的 showedPlayer 判断是亮王成功还是继续加亮
             return true;
@@ -515,22 +625,307 @@ namespace GameBase.Model.Huolong
 
         public RoundReport MakeRoundCalculate()
         {
-            // todo
-            return default;
+            // 设定返回值
+            var ret = new RoundReport();
+            ret.roundIndex = RoundIndex;
+            ret.score = 0;
+            ret.winner = LeadPlayer;
+            ret.threwCards = new int[settings.playerNum][];
+            for (int i = 0; i < settings.playerNum; ++i)
+            {
+                ret.threwCards[i] = roundCardLayout[i].GetAll();
+                foreach (var c in ret.threwCards[i])
+                {
+                    ret.score += Core.Poker.Helper.GetScore(c);
+                }
+            }
+            // 计算结果
+            ret.winner = LeadPlayer;
+            for (int c = LeadPlayer + 1; c != LeadPlayer; ++c)
+            {
+                if (c >= settings.playerNum)
+                {
+                    c = -1;
+                    continue;
+                }
+                if (Core.Poker.Huolong.Helper.CompareAsThrewCards(roundCardLayout[ret.winner], roundCardLayout[c], MainColor, MainPoint, OftenMainPoint) < 0)
+                {
+                    ret.winner = c;
+                }
+            }
+            // 应用结果
+            LeadPlayer = ret.winner;
+            score[LeadPlayer % settings.campNum] += ret.score;
+            ++RoundIndex;
+            return ret;
         }
 
         public MatchReport MakeMatchCalculate()
         {
-            // todo
+            // 记录信息
+            var ret = new MatchReport
+            {
+                matchIndex = MatchIndex,
+                totalScore = new int[settings.campNum],
+                lastCards = lastCardLayout.GetAll(),
+                oldMainPlayer = MainPlayer,
+                oldLevels = new int[settings.campNum],
+                finallyThrew = new int[settings.playerNum][]
+            };
+            for (int i = 0; i < settings.campNum; ++i)
+            {
+                ret.oldLevels[i] = level[i];
+            }
+            for (int i = 0; i < settings.playerNum; ++i)
+            {
+                ret.finallyThrew[i] = roundCardLayout[i].GetAll();
+            }
+            // 底牌分
+            var lastScore = lastCardLayout.GetScoreCount() * (settings.lastCardsScoreDouble ? 2 : 1);
+            score[LeadPlayer % settings.campNum] += lastScore;
+            // 检测分数情况
+            var fullScore = new bool[settings.campNum];
+            var halfScoreNum = 0;
+            var noScoreNum = 0;
+            int maxFullScore = 0;
+            int maxFullScoreId = 0;
+            for (int i = 0; i < settings.campNum; ++i)
+            {
+                ret.totalScore[i] = score[i];
+                fullScore[i] = score[i] >= settings.fullScore;
+                if (score[i] >= settings.fullScore / 2)
+                {
+                    ++halfScoreNum;
+                }
+                else if (score[i] == 0)
+                {
+                    ++noScoreNum;
+                }
+                if (i != CurrentCamp)
+                {
+                    if (score[i] > maxFullScore)
+                    {
+                        maxFullScore = score[i];
+                        maxFullScoreId = i;
+                    }
+                    else if (score[i] == maxFullScore)
+                    {
+                        if (maxFullScore == 0 || i + settings.campNum - CurrentCamp < maxFullScoreId + settings.campNum - CurrentCamp)
+                        {
+                            maxFullScore = score[i];
+                            maxFullScoreId = i;
+                        }
+                    }
+                }
+            }
+            // 根据规则检测最终赢家
+            switch (settings.winMatchWay)
+            {
+                case WinMatchWay.GotLastCards:
+                    ret.winner = LeadPlayer % settings.campNum;
+                    break;
+                case WinMatchWay.FullMostScore:
+                    ret.winner = maxFullScore == 0 ? CurrentCamp : maxFullScoreId;
+                    break;
+                case WinMatchWay.GotLastCardsAndFullScore:
+                    ret.winner = fullScore[LeadPlayer % settings.campNum] ? LeadPlayer % settings.campNum : CurrentCamp;
+                    break;
+                case WinMatchWay.GotLastCardsOrFullMostScore:
+                    if (LeadPlayer % settings.campNum != CurrentCamp)
+                    {
+                        ret.winner = LeadPlayer % settings.campNum;
+                    }
+                    else
+                    {
+                        ret.winner = maxFullScore == 0 ? CurrentCamp : maxFullScoreId;
+                    }
+                    break;
+            }
+            // 计算升级数
+            int totalLevel;
+            if (ret.winner == LeadPlayer % settings.campNum)
+            {
+                // 抠底升级
+                var numJoker1 = lastCardLayout.GetColorPointCards(Core.Poker.Helper.Joker1).Length;
+                var numJoker2 = lastCardLayout.GetColorPointCards(Core.Poker.Helper.Joker2).Length;
+                if (numJoker1 == 0)
+                {
+                    // 无星抠底
+                    totalLevel = settings.noJokerBaseUpgrade;
+                }
+                else
+                {
+                    // 摘星抠底连升
+                    totalLevel = settings.haveJokerBaseUpgrade + numJoker1 * settings.joker1AddUpgrade + numJoker2 * settings.joker2AddUpgrade;
+                }
+            }
+            else
+            {
+                // 未抠底
+                totalLevel = settings.noLastCardsBaseUpgrade;
+            }
+            if (ret.winner == CurrentCamp)
+            {
+                // 坐庄成功,根据闲家分数情况测算加升
+                if (halfScoreNum == 0)
+                {
+                    totalLevel += settings.noHalfScroreAddUpgrade;
+                }
+                totalLevel += noScoreNum * settings.noScoreAddUpgrade;
+            }
+            else if (LeadPlayer % settings.campNum != CurrentCamp && fullScore[LeadPlayer % settings.campNum])
+            {
+                // 坐庄失败检测是否被降级, 打庄家降级要求抠底者自己分数足够(但不必分数最高）
+                int thresholdIndex = -1;
+                if (settings.thresholdsLevels != null)
+                {
+                    for (int i = 0; i < settings.thresholdsLevels.Length; ++i)
+                    {
+                        if (MainPoint == settings.thresholdsLevels[i])
+                        {
+                            thresholdIndex = i;
+                            break;
+                        }
+                    }
+                }
+                if (thresholdIndex >= 0)
+                {
+                    // 门槛级,有可能降级,看看抠底一手的牌型是否能导致降级
+                    bool downGrade = false;
+                    var winCard = roundCardLayout[LeadPlayer].First();
+                    if (Core.Poker.Helper.GetColorPoint(winCard) == Core.Poker.Helper.Joker1 && settings.downgradeByJoker1)
+                    {
+                        downGrade = true;
+                    }
+                    if (Core.Poker.Helper.GetColorPoint(winCard) == Core.Poker.Helper.Joker2 && settings.downgradeByJoker2)
+                    {
+                        downGrade = true;
+                    }
+                    if (Core.Poker.Helper.GetColor(winCard) == MainColor && Core.Poker.Helper.GetPoint(winCard) == MainPoint && settings.downgradeByMainCP)
+                    {
+                        downGrade = true;
+                    }
+                    if (Core.Poker.Helper.GetColor(winCard) != MainColor && Core.Poker.Helper.GetPoint(winCard) == MainPoint && settings.downgradeByUnMainCP)
+                    {
+                        downGrade = true;
+                    }
+                    if (Core.Poker.Helper.GetColor(winCard) != MainColor && Core.Poker.Helper.GetPoint(winCard) == OftenMainPoint && settings.downgradeByMainConstantMain)
+                    {
+                        downGrade = true;
+                    }
+                    if (Core.Poker.Helper.GetColor(winCard) != MainColor && Core.Poker.Helper.GetPoint(winCard) == OftenMainPoint && settings.downgradeByUnMainConstantMain)
+                    {
+                        downGrade = true;
+                    }
+                    if (downGrade)
+                    {
+                        if (thresholdIndex == 0)
+                        {
+                            totalLevel = settings.startLevel - settings.thresholdsLevels[thresholdIndex];
+                        }
+                        else
+                        {
+                            totalLevel = settings.thresholdsLevels[thresholdIndex - 1] - settings.thresholdsLevels[thresholdIndex];
+                        }
+                        if (totalLevel > 0)
+                        {
+                            totalLevel -= 13;
+                        }
+                    }
+                }
+            }
+            bool onJokerLevel = false;
+            if (totalLevel < 0)
+            {
+            }
+            else
+            {
+                CurrentCamp = ret.winner;
+                // 处理禁止超越门槛级
+                if (ret.winner == CurrentCamp && MainPoint == 0)
+                {
+                    ret.gameover = true;
+                }
+                else if (settings.thresholdsLevels != null)
+                {
+                    for (int i = 1; i < totalLevel; ++i)
+                    {
+                        int targetLevel = level[ret.winner] + i;
+                        while (targetLevel > 13)
+                        {
+                            targetLevel -= 13;
+                        }
+                        for (int n = 0; n < settings.thresholdsLevels.Length; ++n)
+                        {
+                            if (targetLevel == settings.thresholdsLevels[n])
+                            {
+                                totalLevel = i;
+                                break;
+                            }
+                        }
+                        if (totalLevel - 1 > i)
+                        {
+                            if (i == settings.endLevel)
+                            {
+                                if (settings.jokerAfterEndLevel)
+                                {
+                                    onJokerLevel = true;
+                                    totalLevel = i + 1;
+                                    break;
+                                }
+                                else
+                                {
+                                    ret.gameover = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (ret.gameover)
+            {
+                ret.upgradedLevelNumber = 1;
+                level[CurrentCamp] = settings.jokerAfterEndLevel ? 0 : settings.endLevel;
+            }
+            else
+            {
+                ret.upgradedLevelNumber = totalLevel;
+                level[CurrentCamp] = onJokerLevel ? 0 : (level[CurrentCamp] + totalLevel);
+                while (level[CurrentCamp] > 13)
+                {
+                    level[CurrentCamp] -= 13;
+                }
+            }
+            mainPlayers[CurrentCamp] += settings.campNum;
+            if (mainPlayers[CurrentCamp] >= settings.playerNum)
+            {
+                mainPlayers[CurrentCamp] = CurrentCamp;
+            }
+            ret.newMainPlayer = MainPlayer;
+            ret.newLevels = new int[settings.campNum];
+            for (int i = 0; i < settings.campNum; ++i)
+            {
+                ret.newLevels[i] = level[i];
+            }
+
             MatchState = MatchState.Idle;
-            return default;
+            return ret;
         }
 
         public GameReport GetGameResult()
         {
-            //todo
+            var ret = new GameReport
+            {
+                finalLevels = new int[settings.campNum],
+                totalMatches = MatchIndex,
+                winner = CurrentCamp
+            };
+            for (int i = 0; i < ret.finalLevels.Length; ++i)
+            {
+                ret.finalLevels[i] = GetCampLevel(i);
+            }
             GameState = GameState.Idle;
-            return default;
+            return ret;
         }
 
         // 设定
@@ -540,6 +935,7 @@ namespace GameBase.Model.Huolong
 
         private int[] mainPlayers = null;
         private int[] level = null;
+        private int[] score = null;
 
         // 回合数据
 

@@ -17,6 +17,16 @@ namespace GameBase.Core.Poker.Huolong
             return ret;
         }
 
+        public int GetScoreCount()
+        {
+            int ret = 0;
+            foreach (var i in this)
+            {
+                ret += Poker.Helper.GetScore(i);
+            }
+            return ret;
+        }
+
         public bool GetIsAllSame()
         {
             for (int i = 1; i < Count; ++i)
@@ -34,6 +44,10 @@ namespace GameBase.Core.Poker.Huolong
             if (leadCards.Count == 0 || Count < leadCards.Count)
             {
                 return null;
+            }
+            if (mainPoint == 0)
+            {
+                mainColor = CardColor.Joker;
             }
             var isMain = Helper.GetIsMain(leadCards[0], mainColor, mainPoint, oftenMainPoint);
             var color = Poker.Helper.GetColor(leadCards[0]);

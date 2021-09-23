@@ -17,7 +17,6 @@ namespace GameBase.Model.Huolong
 
         public CardColor MainColor { get; }
         public int MatchIndex { get; }
-        public int Score { get; }
         public int RoundIndex { get; }
         public int CurrentCamp { get; }
         public int MainPoint { get; }
@@ -38,5 +37,6 @@ namespace GameBase.Model.Huolong
         #endregion 回合状态
 
         public int GetCampLevel(int camp);
+        public int GetCampScore(int camp);
     }
 }
