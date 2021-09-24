@@ -8,7 +8,7 @@ namespace GameBase.Common.Interface.Poker.Huolong
     {
         public Core.Poker.Huolong.GameSetting GameSetting { get; }
         public Model.Poker.Huolong.IModel Model { get; }
-        public bool Response(int player, Core.Poker.Huolong.GameNoticeResponse response);
-        public bool Operate<T>(int player, Core.Poker.Huolong.GameOperationEvent _event, T data);
+        public bool Response(Core.Poker.Huolong.GameNoticeResponse response);
+        public bool Operate<T>(Core.Poker.Huolong.GameOperationEvent _event, T data);
     }
 }

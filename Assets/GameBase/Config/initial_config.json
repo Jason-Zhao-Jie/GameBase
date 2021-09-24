@@ -48,7 +48,7 @@
         "downgradeByMainConstantMain": false,
         "downgradeByUnMainConstantMain": false,
         "recordThisMatch": false,
-        "firstRoundGiveCardsDelay": 0.1,
-        "aroundOverDelay": 2
+        "firstRoundGiveCardsDelay": 150,
+        "aroundOverDelay": 2000
     }
 }

@@ -32,12 +32,12 @@ namespace GameBase.Common.Core.Poker.Huolong
         public bool downgradeByMainConstantMain;
         public bool downgradeByUnMainConstantMain;
         public bool recordThisMatch;
-        public float firstRoundGiveCardsDelay;
+        public int firstRoundGiveCardsDelay;
         public int aroundOverDelay;
     }
 
     [System.Serializable]
-    public struct LastCardsReport
+    public class LastCardsReport
     {
         public int[][] pain;
         public int[][] gain;
@@ -45,7 +45,7 @@ namespace GameBase.Common.Core.Poker.Huolong
     }
 
     [System.Serializable]
-    public struct RoundReport
+    public class RoundReport
     {
         public int roundIndex;
         public int[][] threwCards;
@@ -55,7 +55,7 @@ namespace GameBase.Common.Core.Poker.Huolong
     }
 
     [System.Serializable]
-    public struct MatchReport
+    public class MatchReport
     {
         public int matchIndex;
         public int winner;
@@ -71,7 +71,7 @@ namespace GameBase.Common.Core.Poker.Huolong
     }
 
     [System.Serializable]
-    public struct GameReport
+    public class GameReport
     {
         public int winner;
         public int totalMatches;

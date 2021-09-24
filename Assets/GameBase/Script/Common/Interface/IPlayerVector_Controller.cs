@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using GameBase.Common.Core;
 
 namespace GameBase.Common.Interface
 {

@@ -13,6 +13,7 @@ namespace GameBase.Common.Model.Poker.Huolong
 
         public GameState GameState { get; private set; } = GameState.Idle;
         public MatchState MatchState { get; private set; } = MatchState.Idle;
+        public GameSetting Setting => settings;
 
         #endregion ÓÎÏ·×´Ì¬
 
@@ -163,11 +164,19 @@ namespace GameBase.Common.Model.Poker.Huolong
             }
         }
 
-        public int SendOneCardToPlayer(int player)
+        public int SendOneCardToPlayer()
         {
+            if(settings.lastCardsNum == mainCardLayout.Count)
+            {
+                return 0;
+            }
             MatchState = MatchState.GivingHandCards;
             var card = mainCardLayout.PopCard();
-            playerCardLayout[player].PushCard(card);
+            playerCardLayout[CurrentPlayer].PushCard(card);
+            if(++CurrentPlayer >= settings.playerNum)
+            {
+                CurrentPlayer = 0;
+            }
             return card;
         }
 
@@ -275,6 +284,7 @@ namespace GameBase.Common.Model.Poker.Huolong
                 showedCards = newCards;
                 showingCards = new int[0];
                 ShowedPlayer = player;
+                ShowingPlayer = -1;
                 switch (settings.mainColorGetWay)
                 {
                     case MainColorGetWay.FirstMatchShowMain:

@@ -1,14 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using GameBase.Common.Core.Poker.Huolong;
 
 namespace GameBase.Common.Interface.Poker.Huolong
 {
-    public interface IController : Poker.IController
+    public interface IController : IController<IPlayerVector_Controller, GameSetting>
     {
-        public Core.Poker.Huolong.GameSetting GameSetting { get; }
         public Model.Poker.Huolong.IModel Model { get; }
-        public bool Response(int player, Core.Poker.Huolong.GameNoticeResponse response);
-        public bool Operate<T>(int player, Core.Poker.Huolong.GameOperationEvent _event, T data);
+        public bool Response(int player, GameNoticeResponse response);
+        public bool Operate<T>(int player, GameOperationEvent _event, T data);
     }
 }
