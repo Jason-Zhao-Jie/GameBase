@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace GameBase.Common.Interface.Poker.Huolong
 {
     public interface IPlayerVector_Item : Poker.IPlayerVector_Item
@@ -9,6 +5,6 @@ namespace GameBase.Common.Interface.Poker.Huolong
         public Core.Poker.Huolong.GameSetting GameSetting { get; }
         public Model.Poker.Huolong.IModel Model { get; }
         public bool Response(Core.Poker.Huolong.GameNoticeResponse response);
-        public bool Operate<T>(Core.Poker.Huolong.GameOperationEvent _event, T data);
+        public bool Operate<T>(Core.Poker.Huolong.GameOperationEvent _event, T data) where T : class;
     }
 }

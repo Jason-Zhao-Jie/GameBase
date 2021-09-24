@@ -39,9 +39,9 @@ namespace GameBase.Common.Core.Poker.Huolong
             return true;
         }
 
-        public int[] GetSuitableCards(CardLayout leadCards, CardColor mainColor, int mainPoint, int oftenMainPoint)
+        public int[] GetSuitableCards(int[] leadCards, CardColor mainColor, int mainPoint, int oftenMainPoint)
         {
-            if (leadCards.Count == 0 || Count < leadCards.Count)
+            if (leadCards.Length == 0 || Count < leadCards.Length)
             {
                 return null;
             }
@@ -79,6 +79,13 @@ namespace GameBase.Common.Core.Poker.Huolong
             return ret.ToArray();
         }
 
+        public void SortAsHandCards(CardColor mainColor, int mainPoint, int oftenMainPoint)
+        {
+            cards.Sort((int a, int b) =>
+            {
+                return Helper.CompareAsHandCard(a, b, mainColor, mainPoint, oftenMainPoint);
+            });
+        }
 
     }
 }

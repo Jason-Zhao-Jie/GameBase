@@ -26,14 +26,14 @@ namespace GameBase.Common.Core.Poker.Huolong
         PlayerShowingStar,  // 有人亮王牌通知, 此时还未亮王牌之后的定主牌, 不需要返回
         PlayerShowedStar,   // 亮王牌定主通知, 不需要返回
         MatchAborted_NobodyShowed,  // 对局重置: 无人亮王牌, 需要返回 matchAborted_nobodyShown_confirm 确认后开启后续步骤 (重开首局)
-        GameAborted_PlayerLeft,     // 游戏中止: 玩家离开, 不需要返回
         GainLastCards,  // 发底牌通知, 不需要返回, 但需要后续发送埋底/摘星操作
         PainLastCards,  // 埋底结果通知, 需要返回 PainLastCards_Confirm 确认后才能进入出牌操作
-        AskForThrow,    // 要求玩家出牌, 不需要返回, 但需要玩家进行出牌操作
         PlayerThrew,    // 玩家出牌情况通知, 不需要返回    
+        AskForThrow,    // 要求玩家出牌, 不需要返回, 但需要玩家进行出牌操作
         RoundReport,    // 一回合出牌结束, 通报本回合结果, 要求返回 RoundConfirm 之后才会进行下一回合
         MatchReport,    // 一局结束, 通报本局结果, 要求返回 MatchConfirm 才会开始新一局
         GameReport,     // 游戏结束, 不需要返回
+        GameAborted_PlayerLeft,     // 游戏中止: 玩家离开, 不需要返回
         PlayerInfoChanged,  // 玩家信息变更时发送, 不需要返回
     }
 

@@ -6,6 +6,6 @@ namespace GameBase.Common.Interface.Poker.Huolong
     {
         public Model.Poker.Huolong.IModel Model { get; }
         public bool Response(int player, GameNoticeResponse response);
-        public bool Operate<T>(int player, GameOperationEvent _event, T data);
+        public bool Operate<T>(int player, GameOperationEvent _event, T data) where T : class;
     }
 }

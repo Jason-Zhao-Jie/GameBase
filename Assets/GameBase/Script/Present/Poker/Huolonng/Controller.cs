@@ -74,7 +74,7 @@ namespace GameBase.Present.Poker.Huolong
             token.Cancel();
         }
 
-        public bool Operate<T>(int player, GameOperationEvent _event, T data)
+        public bool Operate<T>(int player, GameOperationEvent _event, T data) where T : class
         {
             if (messages == null || token == null || player < 0 || player >= GameSetting.playerNum || token.IsCancellationRequested || data as int[] == null)
             {
@@ -171,7 +171,7 @@ namespace GameBase.Present.Poker.Huolong
                                 OnPlayerMatchConfirm(msg.player);
                                 break;
                             default:
-                                // todo ´íÎó±¨¸æ
+                                Common.PlatformInterface.Base.DebugError("Unknown Notice Response received by Huolong Controller, player:" + msg.player + ", response code:" + msg.code);
                                 break;
                         }
                     }
@@ -207,19 +207,9 @@ namespace GameBase.Present.Poker.Huolong
             players[player].ResponseOperation(GameOperationEvent.ShowStar, ret);
             if (ret == GameOperationResponse.Success)
             {
-                if (model.IsShowMainPoint)
+                for (int i = 0; i < model.Setting.playerNum; ++i)
                 {
-                    for (int i = 0; i < model.Setting.playerNum; ++i)
-                    {
-                        players[i].Notice(GameNoticeEvent.PlayerShowedStar, model.GetPlayerCardLayout(player).GetAll());
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < model.Setting.playerNum; ++i)
-                    {
-                        players[i].Notice(GameNoticeEvent.PlayerShowingStar, model.GetPlayerCardLayout(player).GetAll());
-                    }
+                    players[i].Notice(GameNoticeEvent.PlayerShowingStar, new int[] { player }, model.GetPlayerCardLayout(player).GetAll());
                 }
             }
         }
@@ -254,7 +244,7 @@ namespace GameBase.Present.Poker.Huolong
             {
                 for (int i = 0; i < model.Setting.playerNum; ++i)
                 {
-                    players[i].Notice(GameNoticeEvent.PlayerThrew, cards);
+                    players[i].Notice<int[]>(GameNoticeEvent.PlayerThrew, cards);
                 }
                 if (model.CurrentPlayer == model.LeadPlayer)
                 {
@@ -268,7 +258,7 @@ namespace GameBase.Present.Poker.Huolong
                 }
                 else
                 {
-                    players[model.CurrentPlayer].Notice<object>(GameNoticeEvent.AskForThrow, null);
+                    players[model.CurrentPlayer].Notice<int[]>(GameNoticeEvent.AskForThrow, model.GetPlayerCardLayout(model.LeadPlayer).GetAll());
                 }
             }
         }
@@ -286,7 +276,7 @@ namespace GameBase.Present.Poker.Huolong
                 waitingResponseType = GameNoticeResponse.StartMatch_Ready;
                 for (int i = 0; i < model.Setting.playerNum; ++i)
                 {
-                    players[i].Notice(GameNoticeEvent.StartMatch, model.MatchIndex);
+                    players[i].Notice<object>(GameNoticeEvent.StartMatch, null);
                 }
             }
         }
@@ -321,14 +311,14 @@ namespace GameBase.Present.Poker.Huolong
                                 model.SendLastCardToMainPlayer();
                                 for (int i = 0; i < model.Setting.playerNum; ++i)
                                 {
-                                    players[i].Notice(GameNoticeEvent.GainLastCards, lastCards);
+                                    players[i].Notice<int[]>(GameNoticeEvent.GainLastCards, lastCards);
                                 }
                             }
                             break;
                         }
                         else
                         {
-                            players[p].Notice(GameNoticeEvent.GiveAllCards, card);
+                            players[p].Notice<int[]>(GameNoticeEvent.GiveOneCard, new int[] { card });
                             if(!model.IsShowMainPoint && model.ShowingPlayer == p)
                             {
                                 if(model.ShowJokerResult(p, card))
@@ -337,14 +327,14 @@ namespace GameBase.Present.Poker.Huolong
                                     {
                                         for (int i = 0; i < model.Setting.playerNum; ++i)
                                         {
-                                            players[i].Notice(GameNoticeEvent.PlayerShowingStar, model.GetPlayerCardLayout(player).GetAll());
+                                            players[i].Notice(GameNoticeEvent.PlayerShowingStar, new int[] { player }, model.GetPlayerCardLayout(player).GetAll());
                                         }
                                     }
                                     else
                                     {
                                         for (int i = 0; i < model.Setting.playerNum; ++i)
                                         {
-                                            players[i].Notice(GameNoticeEvent.PlayerShowedStar, model.GetPlayerCardLayout(player).GetAll());
+                                            players[i].Notice(GameNoticeEvent.PlayerShowedStar, new int[] { player }, model.GetPlayerCardLayout(player).GetAll(), new int[] { card });
                                         }
                                     }
                                 }
@@ -358,13 +348,13 @@ namespace GameBase.Present.Poker.Huolong
                     var lastCards = model.SendAllCardsOver();
                     for (int i = 0; i < model.Setting.playerNum; ++i)
                     {
-                        players[i].Notice(GameNoticeEvent.GiveAllCards, model.GetPlayerCardLayout(i).GetAll());
+                        players[i].Notice<int[]>(GameNoticeEvent.GiveAllCards, model.GetPlayerCardLayout(i).GetAll());
                     }
                     await Task.Delay(GameSetting.firstRoundGiveCardsDelay);
                     model.SendLastCardToMainPlayer();
                     for (int i = 0; i < model.Setting.playerNum; ++i)
                     {
-                        players[i].Notice(GameNoticeEvent.GainLastCards, lastCards);
+                        players[i].Notice<int[]>(GameNoticeEvent.GainLastCards, lastCards);
                     }
                 }
             }
@@ -383,7 +373,7 @@ namespace GameBase.Present.Poker.Huolong
                 waitingResponseType = GameNoticeResponse.StartMatch_Ready;
                 for (int i = 0; i < model.Setting.playerNum; ++i)
                 {
-                    players[i].Notice(GameNoticeEvent.StartMatch, model.MatchIndex);
+                    players[i].Notice<object>(GameNoticeEvent.StartMatch, null);
                 }
             }
         }
@@ -426,7 +416,7 @@ namespace GameBase.Present.Poker.Huolong
             }
         }
 
-        private void OnPlayerMatchConfirm(int player)
+        private async void OnPlayerMatchConfirm(int player)
         {
             playerFlags[player] = true;
             if (CheckAllFlags())
@@ -441,6 +431,11 @@ namespace GameBase.Present.Poker.Huolong
                     {
                         players[i].Notice(GameNoticeEvent.GameReport, game);
                     }
+                    token.Cancel();
+                    await task;
+                    task = null;
+                    messages = null;
+                    token = new System.Threading.CancellationTokenSource();
                 }
                 else
                 {
@@ -449,15 +444,15 @@ namespace GameBase.Present.Poker.Huolong
                     waitingResponseType = GameNoticeResponse.StartMatch_Ready;
                     for (int i = 0; i < model.Setting.playerNum; ++i)
                     {
-                        players[i].Notice(GameNoticeEvent.StartMatch, model.MatchIndex);
+                        players[i].Notice<object>(GameNoticeEvent.StartMatch, null);
                     }
                 }
             }
         }
 
         private readonly Model model;
-        private Dictionary<int, IPlayerVector_Controller> players;
-        private List<bool> playerFlags;
+        private readonly Dictionary<int, IPlayerVector_Controller> players;
+        private readonly List<bool> playerFlags;
         private bool waitingResponse;
         private GameNoticeResponse waitingResponseType;
         private System.Threading.CancellationTokenSource token;

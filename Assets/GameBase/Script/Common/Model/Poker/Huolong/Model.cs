@@ -609,7 +609,7 @@ namespace GameBase.Common.Model.Poker.Huolong
             else
             {
                 // 非首家必须把同花色牌出完, 才能出其他花色
-                var suitCards = new List<int>(playerCardLayout[player].GetSuitableCards(roundCardLayout[LeadPlayer], MainColor, MainPoint, OftenMainPoint));
+                var suitCards = new List<int>(playerCardLayout[player].GetSuitableCards(roundCardLayout[LeadPlayer].GetAll(), MainColor, MainPoint, OftenMainPoint));
                 int targetNum = System.Math.Min(suitCards.Count, cards.Length);
                 foreach (var c in cards)
                 {

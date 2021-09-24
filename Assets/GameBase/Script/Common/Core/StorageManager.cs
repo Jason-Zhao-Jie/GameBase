@@ -31,35 +31,37 @@ namespace GameBase.Common.Core
             }
         }
 
+        public StorageManager(PlatformInterface.IQuickStorage iqs)
+        {
+            this.iqs = iqs;
+        }
+
 
         public T GetGameSetting<T>(GameType type, int subType)
         {
-            return this.LoadItem<T>(key_gameSetting + type + subType);
+            return LoadItem<T>(key_gameSetting + type + subType);
         }
 
         public void SetGameSetting<T>(GameType type, int subType, T value)
         {
-            this.SaveItem(key_gameSetting + type + subType, value);
+            SaveItem(key_gameSetting + type + subType, value);
         }
 
         public void ClearAllStorage()
         {
-            UnityEngine.PlayerPrefs.DeleteAll();
+            iqs.Clear();
         }
 
         private void SaveItem<T>(string key, T value)
         {
-            UnityEngine.PlayerPrefs.SetString(key, UnityEngine.JsonUtility.ToJson(value));
+            iqs.SetItem(key, value);
         }
 
         private T LoadItem<T>(string key)
         {
-            var json = UnityEngine.PlayerPrefs.GetString(key);
-            if (string.IsNullOrEmpty(json))
-            {
-                return default;
-            }
-            return UnityEngine.JsonUtility.FromJson<T>(json);
+            return iqs.GetItem<T>(key);
         }
+
+        private readonly PlatformInterface.IQuickStorage iqs;
     }
 }
