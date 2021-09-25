@@ -66,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 491b98ad63f486942b785f2b9181297c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 83007956125251b45a10809dcdad2d20, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -119,7 +119,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8517631991258312017}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5962980014149734300}
+        m_TargetAssemblyTypeName: GameBase.View.Poker.Card, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
 --- !u!1 &7681201544086999672
 GameObject:
   m_ObjectHideFlags: 0
@@ -132,7 +144,7 @@ GameObject:
   - component: {fileID: 5652404260398410526}
   - component: {fileID: 5962980014149734300}
   m_Layer: 5
-  m_Name: PokerCard
+  m_Name: UIPokerCard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -156,7 +168,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 96, y: 155}
+  m_SizeDelta: {x: 96, y: 186}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5652404260398410526
 CanvasRenderer:
@@ -178,3 +190,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e139788745ddf8345adf3dccbeee38b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 0
+  image: {fileID: 8517631991258312017}
+  sprite: {fileID: 0}
+  clickSound: {fileID: 0}
+  enableClick: 0

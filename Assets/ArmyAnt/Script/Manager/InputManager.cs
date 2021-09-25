@@ -13,10 +13,10 @@ namespace ArmyAnt.Manager {
             public const KeyCode Y = KeyCode.Joystick1Button3;
             public const KeyCode LeftBumper = KeyCode.Joystick1Button4;
             public const KeyCode RightBumper = KeyCode.Joystick1Button5;
-            public const KeyCode Back = KeyCode.Joystick1Button6;
-            public const KeyCode Start = KeyCode.Joystick1Button7;
-            public const KeyCode LeftRocker = KeyCode.Joystick1Button8;    // 左摇杆按下
-            public const KeyCode RightRocker = KeyCode.Joystick1Button9;   // 右摇杆按下
+            public const KeyCode Back = KeyCode.Joystick1Button6;       // Back 返回按钮
+            public const KeyCode Start = KeyCode.Joystick1Button7;      // Start 按钮
+            public const KeyCode LeftRocker = KeyCode.Joystick1Button8;    // 左摇杆
+            public const KeyCode RightRocker = KeyCode.Joystick1Button9;   // 右摇杆
         };
 
         protected static class Ps4JoysticsCode {
@@ -28,12 +28,12 @@ namespace ArmyAnt.Manager {
             public const KeyCode Right1 = KeyCode.Joystick1Button5;
             public const KeyCode Left2 = KeyCode.Joystick1Button6;
             public const KeyCode Right2 = KeyCode.Joystick1Button7;
-            public const KeyCode Share = KeyCode.Joystick1Button8;    // 左摇杆按下
-            public const KeyCode Option = KeyCode.Joystick1Button9;   // 右摇杆按下
-            public const KeyCode LeftRocker = KeyCode.Joystick1Button10;    // 左摇杆按下
-            public const KeyCode RightRocker = KeyCode.Joystick1Button11;   // 右摇杆按下
-            public const KeyCode PS = KeyCode.Joystick1Button12;    // 左摇杆按下
-            public const KeyCode Touch = KeyCode.Joystick1Button13;   // 右摇杆按下
+            public const KeyCode Share = KeyCode.Joystick1Button8;    // 分享按钮
+            public const KeyCode Option = KeyCode.Joystick1Button9;   // 目录按钮
+            public const KeyCode LeftRocker = KeyCode.Joystick1Button10;    // 左摇杆
+            public const KeyCode RightRocker = KeyCode.Joystick1Button11;   // 右摇杆
+            public const KeyCode PS = KeyCode.Joystick1Button12;    // PS主按钮
+            public const KeyCode Touch = KeyCode.Joystick1Button13;   // 触摸板
         }
 
         public enum JoysticsAxes {

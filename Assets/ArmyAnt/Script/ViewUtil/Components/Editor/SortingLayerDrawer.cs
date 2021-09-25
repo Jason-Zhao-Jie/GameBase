@@ -1,14 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using System.Collections.Generic;
 
-/*
---------------------- 
-作者：鱼蛋-Felix
-来源：CSDN
-原文：https://blog.csdn.net/egostudio/article/details/51751149 
-版权声明：本文为博主原创文章，转载请附上博文链接！
-*/
 
 namespace ArmyAnt.ViewUtil.Components.Editor {
 

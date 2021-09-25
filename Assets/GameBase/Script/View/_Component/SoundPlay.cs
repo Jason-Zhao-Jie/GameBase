@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-namespace GameBase.Present
+namespace GameBase.View.Component
 {
-    public class GameMain : MonoBehaviour
+    public class SoundPlay : MonoBehaviour
     {
         // Start is called before the first frame update
         void Start()
