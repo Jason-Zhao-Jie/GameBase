@@ -24,7 +24,6 @@ namespace GameBase.View
         public AudioSource musicSource;
         public AudioSource soundSource;
 
-        public Canvas bgRoot;
         public GameObject worldRoot;
         public Canvas guiRoot;
 
