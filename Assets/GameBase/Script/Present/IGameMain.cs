@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GameBase.Common.Core;
 
 namespace GameBase.Present
 {
@@ -10,8 +6,9 @@ namespace GameBase.Present
     {
         void PlayMusic(string audioKey, bool isUrl = false);
         void PlaySound(string audioKey, bool isUrl = false);
-        View.MainMenuPanel ShowMainMenuPanel(View.MainMenuPanel.MenuType type);
-
+        int Listen(SystemEventType _event, System.Action<object> callback);
+        bool Unlisten(SystemEventType _event, int id);
+        bool Notify<T>(SystemEventType _event, T data) where T : class;
     }
 
     public static class GameMain
