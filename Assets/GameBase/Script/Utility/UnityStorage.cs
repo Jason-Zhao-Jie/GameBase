@@ -14,7 +14,14 @@ public class UnityStorage : IQuickStorage
         {
             return default;
         }
-        return UnityEngine.JsonUtility.FromJson<T>(json);
+        try
+        {
+            var ret = UnityEngine.JsonUtility.FromJson<T>(json);
+            return ret;
+        }catch(System.Exception e)
+        {
+            return default;
+        }
     }
 
     public void SetItem<T>(string key, T value)

@@ -2,7 +2,7 @@
 namespace GameBase.Common.Core
 {
     [System.Serializable]
-    public class SystemSettings
+    public struct SystemSettings
     {
         public float musicVolume;
         public bool musicMute;

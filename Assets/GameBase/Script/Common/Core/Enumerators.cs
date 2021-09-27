@@ -36,6 +36,7 @@ namespace GameBase.Common.Core
 
     public enum GameType
     {
+        Unknown,
         Poker,
         Chess,
         ChineseChess,

@@ -15,7 +15,7 @@ namespace GameBase.View.Component
         public const string audio_poker_game_lose = "poker_game_lose";
         public const string audio_poker_send_card = "poker_send_card";
 
-        public const string config_denug = "config_debug";
+        public const string config_debug = "config_debug";
         public const string config_initial = "config_initial";
         public const string config_ai = "config_ai";
 
@@ -44,6 +44,11 @@ namespace GameBase.View.Component
         public AudioClip GetAudioClip(string id)
         {
             return audioClipsMap[id];
+        }
+
+        public TextAsset GetConfigText(string id)
+        {
+            return configTextsMap[id];
         }
 
         protected void Awake()
