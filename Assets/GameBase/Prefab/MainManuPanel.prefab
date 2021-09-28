@@ -133,7 +133,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 2
 --- !u!114 &2852953298069757736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -324,6 +324,7 @@ GameObject:
   - component: {fileID: 8880450107808349692}
   - component: {fileID: 8880450107808349695}
   - component: {fileID: 1922190703839750050}
+  - component: {fileID: 5519869807437217839}
   m_Layer: 5
   m_Name: MainManuPanel
   m_TagString: Untagged
@@ -424,6 +425,29 @@ MonoBehaviour:
   btnHelp: {fileID: 5126491002529906351}
   btnQuitBackToStart: {fileID: 8880450107990201552}
   btnExitProgram: {fileID: 8880450109334082207}
+--- !u!114 &5519869807437217839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8880450107808349681}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 187604053612cb44ea0f3e67c9fb66ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttons:
+  - {fileID: 8880450108906096202}
+  - {fileID: 8880450108645947224}
+  - {fileID: 8880450107956339429}
+  - {fileID: 8880450109207865402}
+  - {fileID: 8880450109034591169}
+  - {fileID: 8880450108604032708}
+  - {fileID: 1705293056761177668}
+  - {fileID: 8880450107990201567}
+  - {fileID: 8880450109334082202}
+  sound: {fileID: 8300000, guid: 66f76d357e499504ba5c612d4ba367dd, type: 3}
 --- !u!1 &8880450107956339430
 GameObject:
   m_ObjectHideFlags: 0
@@ -557,7 +581,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 2
 --- !u!114 &8880450107956339428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -711,7 +735,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 2
 --- !u!114 &8880450107990201566
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1260,7 +1284,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 2
 --- !u!114 &8880450108604032711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1414,7 +1438,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 2
 --- !u!114 &8880450108645947227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1568,7 +1592,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 2
 --- !u!114 &8880450108906096205
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1801,7 +1825,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 2
 --- !u!114 &8880450109034591168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1955,7 +1979,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 2
 --- !u!114 &8880450109207865405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2109,7 +2133,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 2
 --- !u!114 &8880450109334082205
 MonoBehaviour:
   m_ObjectHideFlags: 0

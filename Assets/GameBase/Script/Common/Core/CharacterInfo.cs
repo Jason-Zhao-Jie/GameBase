@@ -6,11 +6,11 @@ namespace GameBase.Common.Core
     {
         public int id;
         public string name;
-        public int gender;
+        public Gender gender;
         public int birthYear;
         public int age;
         public string stateWords;
-        public int imageType;
+        public SourceType imageType;
         public string imageUrl;
         public int imageId;
     }

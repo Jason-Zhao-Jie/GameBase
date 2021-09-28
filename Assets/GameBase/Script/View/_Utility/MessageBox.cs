@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace GameBase.View.Utility
 {
-    public class MessageBox : MonoBehaviour
+    public class MessageBox : APanel
     {
         public Text textContent;
         public Button btnLeft;
@@ -15,11 +15,13 @@ namespace GameBase.View.Utility
         public Button btnRight;
         public Text textRight;
 
-        public event System.Action OnClickLeft;
-        public event System.Action OnClickMid;
-        public event System.Action OnClickRight;
+        public event System.Func<bool> OnClickLeft;
+        public event System.Func<bool> OnClickMid;
+        public event System.Func<bool> OnClickRight;
+
+        public override PanelType PanelType => PanelType.MessageBox;
         
-        public void Init(string textBtnLeft, System.Action callbackLeft, string textBtnRight = null, System.Action callbackRight = null, string textBtnMid = null, System.Action callbackMid = null)
+        public void Init(string textBtnLeft, System.Func<bool> callbackLeft, string textBtnRight = null, System.Func<bool> callbackRight = null, string textBtnMid = null, System.Func<bool> callbackMid = null)
         {
             txtLeft = textBtnLeft;
             OnClickLeft = callbackLeft;
@@ -58,13 +60,22 @@ namespace GameBase.View.Utility
             switch (index)
             {
                 case 0:
-                    OnClickLeft();
+                    if (OnClickLeft())
+                    {
+                        Close();
+                    }
                     break;
                 case 1:
-                    OnClickMid();
+                    if (OnClickMid())
+                    {
+                        Close();
+                    }
                     break;
                 case 2:
-                    OnClickRight();
+                    if (OnClickRight())
+                    {
+                        Close();
+                    }
                     break;
             }
         }

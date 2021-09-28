@@ -12,9 +12,15 @@ namespace GameBase.View
         Sprite GetPlayerHeadIcon(int id);
         GameObject CreatePokerCard(int id, Transform transform = null);
         GameObject CreateUIPokerCard(int id, Transform transform = null);
-        GameObject ShowTips(string text, float aliveTime = 2.0f);
-        GameObject ShowWaiting(string text);
+        Utility.TipBar ShowTips(string text, float aliveTime = 2.0f);
+        Utility.TipBar ShowWaiting(string text);
+        T PushPanel<T>() where T : APanel;
+        APanel PopPanel();
+        Utility.MessageBox ShowMessageBox(string textBtn1, System.Func<bool> callbackBtn1, string textBtn2 = null, System.Func<bool> callbackBtn2 = null, string textBtn3 = null, System.Func<bool> callbackBtn3 = null);
+        Utility.PlayerInfoPanel ShowPlayerInfoPanel(CharacterInfo info, bool isMe = false);
+        Utility.SystemSettingPanel ShowSystemSettingPanel();
         MainMenuPanel ShowMainMenuPanel(MainMenuPanel.MenuType type);
+
     }
 
     public class MainScene : MonoBehaviour, Present.IGameMain, IMain
@@ -28,6 +34,9 @@ namespace GameBase.View
 
         public GameObject worldRoot;
         public Canvas guiRoot;
+        public Transform uiPanelRoot;
+        public Transform uiDialogRoot;
+        public Transform uiTopRoot;
 
         public ResourcesObject ro;
         public PrefabCollector pc;
@@ -53,7 +62,7 @@ namespace GameBase.View
         {
             get
             {
-                return LocalUserInfo;
+                return localUserInfo;
             }
             set
             {
@@ -115,15 +124,22 @@ namespace GameBase.View
             soundSource.PlayOneShot(ro.GetAudioClip(audioKey));
         }
 
+        public void PlaySound(AudioClip audio)
+        {
+            soundSource.PlayOneShot(audio);
+        }
+
         public int Listen(SystemEventType _event, System.Action<object[]> callback)
         {
             if (callback == null)
             {
                 return -1;
             }
-            var ld = new ListenerData();
-            ld._event = _event;
-            ld.callback = callback;
+            var ld = new ListenerData
+            {
+                _event = _event,
+                callback = callback
+            };
             if (!listenerMap.ContainsKey(_event))
             {
                 listenerMap.Add(_event, new Dictionary<int, ListenerData>());
@@ -191,40 +207,77 @@ namespace GameBase.View
             return card;
         }
 
-        public GameObject ShowTips(string text, float aliveTime = 2.0f)
+        public Utility.TipBar ShowTips(string text, float aliveTime = 2.0f)
         {
-            var bar = Instantiate(pc.tipBar, guiRoot.transform);
+            var bar = Instantiate(pc.tipBar, uiTopRoot);
             var comp = bar.GetComponent<Utility.TipBar>();
             comp.text.text = text;
             comp.autoRemove = true;
             comp.secondsBeforeRemove = aliveTime;
-            return bar;
+            return comp;
         }
 
-        public GameObject ShowWaiting(string text)
+        public Utility.TipBar ShowWaiting(string text)
         {
-            var bar = Instantiate(pc.waitingBar, guiRoot.transform);
+            var bar = Instantiate(pc.waitingBar, uiTopRoot);
             var comp = bar.GetComponent<Utility.TipBar>();
             comp.text.text = text;
             comp.autoRemove = false;
             comp.secondsBeforeRemove = 0;
-            return bar;
+            return comp;
         }
 
-        public GameObject ShowMessageBox(string textBtn1, System.Action callbackBtn1, string textBtn2 = null, System.Action callbackBtn2 = null, string textBtn3 = null, System.Action callbackBtn3 = null)
+        public T PushPanel<T>() where T : APanel
         {
-            var bar = Instantiate(pc.messageBox, guiRoot.transform);
-            var comp = bar.GetComponent<Utility.MessageBox>();
+            var bar = Instantiate(prefabList[typeof(T)], uiDialogRoot);
+            var ret = bar.GetComponent<T>();
+            if (panelStack.Count>0)
+            {
+                var last = panelStack.Peek();
+                last.gameObject.SetActive(false);
+            }
+            panelStack.Push(ret);
+            return ret;
+        }
+
+        public APanel PopPanel()
+        {
+            var ret = panelStack.Pop();
+            ret.transform.SetParent(null);
+            Destroy(ret.gameObject);
+            if (panelStack.Count > 0)
+            {
+                var last = panelStack.Peek();
+                last.gameObject.SetActive(true);
+            }
+            return ret;
+        }
+
+        public Utility.MessageBox ShowMessageBox(string textBtn1, System.Func<bool> callbackBtn1, string textBtn2 = null, System.Func<bool> callbackBtn2 = null, string textBtn3 = null, System.Func<bool> callbackBtn3 = null)
+        {
+            var comp = PushPanel<Utility.MessageBox>();
             comp.Init(textBtn1, callbackBtn1, textBtn2, callbackBtn2, textBtn3, callbackBtn3);
-            return bar;
+            return comp;
+        }
+
+        public Utility.PlayerInfoPanel ShowPlayerInfoPanel(CharacterInfo info, bool isMe = false)
+        {
+            var comp = PushPanel<Utility.PlayerInfoPanel>();
+            comp.Init(info, isMe);
+            return comp;
+        }
+
+        public Utility.SystemSettingPanel ShowSystemSettingPanel()
+        {
+            var comp = PushPanel<Utility.SystemSettingPanel>();
+            return comp;
         }
 
         public MainMenuPanel ShowMainMenuPanel(MainMenuPanel.MenuType type)
         {
-            var obj = Instantiate(pc.mainMenuPanel, guiRoot.transform);
-            var ret = obj.GetComponent<MainMenuPanel>();
-            ret.Type = type;
-            return ret;
+            var comp = PushPanel<MainMenuPanel>();
+            comp.Type = type;
+            return comp;
         }
 
         #endregion Interfaces
@@ -236,7 +289,11 @@ namespace GameBase.View
         {
             Present.GameMain.Instance = this;
             Instance = this;
+        }
 
+        // Update is called once per frame
+        protected void Start()
+        {
             // debug 参数优先
             var debugText = ro.GetConfigText(ResourcesObject.config_debug).text;
             debug = JsonUtility.FromJson<DebugData>(debugText);
@@ -247,8 +304,8 @@ namespace GameBase.View
 
             // 读取配置-AI玩家
             var aiText = ro.GetConfigText(ResourcesObject.config_ai).text;
-            var aiConfig = JsonUtility.FromJson<CharacterInfo_AI[]>(aiText);
-            foreach (var ai in aiConfig)
+            var aiConfig = JsonUtility.FromJson<AIConfigData>(aiText);
+            foreach (var ai in aiConfig.ais)
             {
                 aiCharactersMap.Add(ai.id, ai);
                 aiCharacterStatesMap.Add(ai.id, new PlayerState() { playerId = ai.id, game = GameType.Unknown, subType = 0, seat = 0, online = false });
@@ -284,16 +341,19 @@ namespace GameBase.View
                 storage.SetGameSetting(GameType.Poker, (int)Common.Core.Poker.GameSubType.Huolong, savedSetting_huolong);
             }
 
+            // UI 注册
+            prefabList.Add(typeof(Utility.MessageBox), pc.messageBox);
+            prefabList.Add(typeof(Utility.PlayerInfoPanel), pc.playerInfoPanel);
+            prefabList.Add(typeof(Utility.SystemSettingPanel), pc.systemSettingPanel);
+            prefabList.Add(typeof(MainMenuPanel), pc.mainMenuPanel);
+
             // 自监听事件
             Listen(SystemEventType.OnSystemSettingChanged, OnSystemSettingChanged);
+            Listen(SystemEventType.OnMyInfoChanged, OnPlayerInfoChanged);
             Listen(SystemEventType.OnPlayerInfoChanged, OnPlayerInfoChanged);
             Listen(SystemEventType.OnPlayerExitGame, OnPlayerExitGame);
             Listen(SystemEventType.OnPlayerOffline, OnPlayerOffline);
-        }
 
-        // Update is called once per frame
-        protected void Start()
-        {
             ShowMainMenuPanel(MainMenuPanel.MenuType.Start);
             PlayMusic(ResourcesObject.audio_main_bg);
         }
@@ -541,7 +601,7 @@ namespace GameBase.View
                                     }
                                     else
                                     {
-                                        Common.PlatformInterface.Base.DebugInfo("摇到了【" + ret.name + "】,但" + (ret.gender == 2 ? "她" : "他") + "不愿意加入游戏，重新寻找");
+                                        Common.PlatformInterface.Base.DebugInfo("摇到了【" + ret.name + "】,但" + (ret.gender == Gender.Female ? "她" : "他") + "不愿意加入游戏，重新寻找");
                                         int minusValue = ret.baseWeight[gameId];
                                         ret = null;
                                         for (int i = 0; i < offlineList.Count; ++i)
@@ -571,6 +631,9 @@ namespace GameBase.View
         #endregion
 
         #region Private fields
+
+        private readonly Dictionary<System.Type, GameObject> prefabList = new Dictionary<System.Type, GameObject>();
+        private readonly Stack<APanel> panelStack = new Stack<APanel>();
 
         private string currentPlayingMusic;
         private bool isCurrentPlayingMusicUrl;
@@ -602,6 +665,13 @@ namespace GameBase.View
             public bool forceClearStorage;
         }
 
+        [System.Serializable]
+        private struct AIConfigData
+        {
+            public CharacterInfo_AI[] ais;
+        }
+
+        [System.Serializable]
         private class InitialData
         {
             public SystemSettings systemSetting;

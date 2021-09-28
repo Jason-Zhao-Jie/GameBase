@@ -9,8 +9,12 @@ namespace GameBase.View.Component
         public GameObject tipBar;
         public GameObject waitingBar;
         public GameObject messageBox;
+        public GameObject systemSettingPanel;
+        public GameObject playerInfoPanel;
 
         public GameObject mainMenuPanel;
+
+        public GameObject gamePanel_huolong;
 
         public GameObject poker_pokerCard;
         public GameObject poker_uiPokerCard;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GameBase.View
 {
-    public class MainMenuPanel : MonoBehaviour
+    public class MainMenuPanel : APanel
     {
         public enum MenuType
         {
@@ -21,6 +21,8 @@ namespace GameBase.View
         public GameObject btnHelp;
         public GameObject btnQuitBackToStart;
         public GameObject btnExitProgram;
+
+        public override PanelType PanelType => PanelType.MessageBox;
 
         public MenuType Type
         {
@@ -66,48 +68,51 @@ namespace GameBase.View
 
         public void OnClickBackClose()
         {
-            transform.SetParent(null);
-            Destroy(gameObject);
+            Close();
         }
 
         public void OnClickStartSingle()
         {
-
+            MainScene.Instance.ShowTips("单机游戏功能正在开发中");
         }
 
         public void OnClickStartLocal()
         {
-
+            MainScene.Instance.ShowTips("直连对战功能正在开发中");
         }
 
         public void OnClickLoginToServer()
         {
-
+            MainScene.Instance.ShowTips("服务器对战功能正在开发中");
         }
 
         public void OnClickMyInfo()
         {
-
+            MainScene.Instance.ShowPlayerInfoPanel(Present.GameMain.Instance.LocalUserInfo, true);
         }
 
         public void OnClickSettings()
         {
-
+            MainScene.Instance.ShowSystemSettingPanel();
         }
 
         public void OnClickHelp()
         {
-
+            MainScene.Instance.ShowTips("帮助说明正在开发中");
         }
 
         public void OnClickQuitBackToStart()
         {
-
+            MainScene.Instance.ShowTips("退回主界面功能正在开发中");
         }
 
         public void OnClickExitProgram()
         {
-
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
 
         private MenuType type;

@@ -120,7 +120,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7468424848269087943}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4170070161012096985}
+        m_TargetAssemblyTypeName: GameBase.View.Utility.SystemSettingPanel, Assembly-CSharp
+        m_MethodName: OnSaveSetting
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 4170070161012096985}
+        m_TargetAssemblyTypeName: GameBase.View.APanel, Assembly-CSharp
+        m_MethodName: Close
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &7468424848317961026
 GameObject:
   m_ObjectHideFlags: 0
@@ -209,7 +233,19 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4170070161012096985}
+        m_TargetAssemblyTypeName: GameBase.View.Utility.SystemSettingPanel, Assembly-CSharp
+        m_MethodName: OnSaveSetting
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &7468424848473156806
 GameObject:
   m_ObjectHideFlags: 0
@@ -976,10 +1012,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: cfeb52c1158468445be82e5c877e4f1a, type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: cfeb52c1158468445be82e5c877e4f1a, type: 3}
-    m_SelectedSprite: {fileID: 21300000, guid: cfeb52c1158468445be82e5c877e4f1a, type: 3}
-    m_DisabledSprite: {fileID: 21300000, guid: 547bb804169b8084a8523d172c156a03, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: f339c25a4bc8a7642bdf4d4d8194ec18, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: f339c25a4bc8a7642bdf4d4d8194ec18, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: f339c25a4bc8a7642bdf4d4d8194ec18, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: b63baeb07a1575b458e8570f910dbc41, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -993,7 +1029,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4170070161012096985}
+        m_TargetAssemblyTypeName: GameBase.View.Utility.SystemSettingPanel, Assembly-CSharp
+        m_MethodName: OnSaveSetting
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 1
 --- !u!222 &7468424849311233533
 CanvasRenderer:
@@ -1229,7 +1277,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4170070161012096985}
+        m_TargetAssemblyTypeName: GameBase.View.Utility.SystemSettingPanel, Assembly-CSharp
+        m_MethodName: OnSaveSetting
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 1
 --- !u!222 &7468424849409344877
 CanvasRenderer:
@@ -1672,6 +1732,8 @@ GameObject:
   - component: {fileID: 7468424849962565173}
   - component: {fileID: 7468424849962565175}
   - component: {fileID: 7468424849962565172}
+  - component: {fileID: 4170070161012096985}
+  - component: {fileID: 4015095419444084139}
   m_Layer: 5
   m_Name: SystemSettingPanel
   m_TagString: Untagged
@@ -1751,6 +1813,38 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4170070161012096985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7468424849962565170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82f68f4febbbec3409901970d10034ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  musicMute: {fileID: 7468424849409344876}
+  musicVolume: {fileID: 7468424850101252105}
+  soundMute: {fileID: 7468424849311233532}
+  soundVolume: {fileID: 7468424848317961028}
+  inputAIDelay: {fileID: 7468424849694186216}
+--- !u!114 &4015095419444084139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7468424849962565170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 187604053612cb44ea0f3e67c9fb66ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttons:
+  - {fileID: 7468424848269087940}
+  sound: {fileID: 8300000, guid: 66f76d357e499504ba5c612d4ba367dd, type: 3}
 --- !u!1 &7468424850004001235
 GameObject:
   m_ObjectHideFlags: 0
@@ -2019,4 +2113,16 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4170070161012096985}
+        m_TargetAssemblyTypeName: GameBase.View.Utility.SystemSettingPanel, Assembly-CSharp
+        m_MethodName: OnSaveSetting
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

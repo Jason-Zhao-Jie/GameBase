@@ -200,6 +200,9 @@ MonoBehaviour:
   soundSource: {fileID: 1377825710}
   worldRoot: {fileID: 69882012}
   guiRoot: {fileID: 1377825708}
+  uiPanelRoot: {fileID: 732841435}
+  uiDialogRoot: {fileID: 1519009042}
+  uiTopRoot: {fileID: 1454427246}
   ro: {fileID: 836089785}
   pc: {fileID: 5221921268566163300}
 --- !u!1 &519420028
@@ -285,6 +288,50 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &732841434
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 732841435}
+  - component: {fileID: 732841437}
+  m_Layer: 5
+  m_Name: BasePanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &732841435
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 732841434}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1377825709}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &732841437
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 732841434}
+  m_CullTransparentMesh: 1
 --- !u!114 &836089785 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5072425051237293156, guid: ce198808714e3db4c9e6262c4351467e, type: 3}
@@ -453,7 +500,10 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
-  m_Children: []
+  m_Children:
+  - {fileID: 732841435}
+  - {fileID: 1519009042}
+  - {fileID: 1454427246}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -558,6 +608,94 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &1454427245
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1454427246}
+  - component: {fileID: 1454427247}
+  m_Layer: 5
+  m_Name: TopPanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1454427246
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1454427245}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1377825709}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &1454427247
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1454427245}
+  m_CullTransparentMesh: 1
+--- !u!1 &1519009041
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1519009042}
+  - component: {fileID: 1519009044}
+  m_Layer: 5
+  m_Name: DialogPanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1519009042
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519009041}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1377825709}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &1519009044
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519009041}
+  m_CullTransparentMesh: 1
 --- !u!1 &1608963848
 GameObject:
   m_ObjectHideFlags: 0
@@ -744,34 +882,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5072425051237293156, guid: ce198808714e3db4c9e6262c4351467e, type: 3}
-      propertyPath: configTexts.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072425051237293156, guid: ce198808714e3db4c9e6262c4351467e, type: 3}
-      propertyPath: configTexts.Array.data[0].id
-      value: config_debug
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072425051237293156, guid: ce198808714e3db4c9e6262c4351467e, type: 3}
-      propertyPath: configTexts.Array.data[1].id
-      value: config_initial
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072425051237293156, guid: ce198808714e3db4c9e6262c4351467e, type: 3}
-      propertyPath: configTexts.Array.data[2].id
-      value: config_ai
-      objectReference: {fileID: 0}
-    - target: {fileID: 5072425051237293156, guid: ce198808714e3db4c9e6262c4351467e, type: 3}
-      propertyPath: configTexts.Array.data[0].value
-      value: 
-      objectReference: {fileID: 4900000, guid: b2dde323de0d8fd40beb8e12069a5623, type: 3}
-    - target: {fileID: 5072425051237293156, guid: ce198808714e3db4c9e6262c4351467e, type: 3}
-      propertyPath: configTexts.Array.data[1].value
-      value: 
-      objectReference: {fileID: 4900000, guid: fe12fb0fdf229e5438f822ebc47f0d14, type: 3}
-    - target: {fileID: 5072425051237293156, guid: ce198808714e3db4c9e6262c4351467e, type: 3}
-      propertyPath: configTexts.Array.data[2].value
-      value: 
-      objectReference: {fileID: 4900000, guid: 966257a12ba8fe7458cc3dd9b96a515b, type: 3}
     - target: {fileID: 5072425051237293157, guid: ce198808714e3db4c9e6262c4351467e, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -829,30 +939,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3497181594669846206, guid: 23834d9a88f39094fa4863f727614f0f, type: 3}
-      propertyPath: tipBar
-      value: 
-      objectReference: {fileID: 6662525939961066450, guid: 0dd4cf3cc015e724ba80e06635c66612, type: 3}
-    - target: {fileID: 3497181594669846206, guid: 23834d9a88f39094fa4863f727614f0f, type: 3}
-      propertyPath: messageBox
-      value: 
-      objectReference: {fileID: 508756541499306335, guid: 16714025406b1fd4c9e0e47e7840aa18, type: 3}
-    - target: {fileID: 3497181594669846206, guid: 23834d9a88f39094fa4863f727614f0f, type: 3}
-      propertyPath: waitingBar
-      value: 
-      objectReference: {fileID: 7440487785395771693, guid: 3bcbff2b00ec1de4b819e966acf01e1e, type: 3}
-    - target: {fileID: 3497181594669846206, guid: 23834d9a88f39094fa4863f727614f0f, type: 3}
-      propertyPath: mainMenuPanel
-      value: 
-      objectReference: {fileID: 8880450107808349681, guid: d8915528f4161434da478184a1147b85, type: 3}
-    - target: {fileID: 3497181594669846206, guid: 23834d9a88f39094fa4863f727614f0f, type: 3}
-      propertyPath: poker_pokerCard
-      value: 
-      objectReference: {fileID: 8173705441380394713, guid: b2aafdc269c14be47861e6fb6f4983d7, type: 3}
-    - target: {fileID: 3497181594669846206, guid: 23834d9a88f39094fa4863f727614f0f, type: 3}
-      propertyPath: poker_uiPokerCard
-      value: 
-      objectReference: {fileID: 7681201544086999672, guid: 6121b01ac5936314288448bd4321f836, type: 3}
     - target: {fileID: 7787996206515728666, guid: 23834d9a88f39094fa4863f727614f0f, type: 3}
       propertyPath: m_Name
       value: PrefabCollector

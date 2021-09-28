@@ -131,7 +131,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 2
 --- !u!1 &7681201544086999672
 GameObject:
   m_ObjectHideFlags: 0
@@ -193,5 +193,5 @@ MonoBehaviour:
   id: 0
   image: {fileID: 8517631991258312017}
   sprite: {fileID: 0}
-  clickSound: {fileID: 0}
+  clickSound: {fileID: 8300000, guid: e6ded47b1af0b984da10721d1f08e5df, type: 3}
   enableClick: 0

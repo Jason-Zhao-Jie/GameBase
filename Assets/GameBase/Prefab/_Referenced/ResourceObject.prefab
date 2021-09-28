@@ -214,3 +214,10 @@ MonoBehaviour:
     value: {fileID: 8300000, guid: fc4f4d336c811a64b9758814cffd0399, type: 3}
   - id: poker_send_card
     value: {fileID: 8300000, guid: 85dc6bf1b7806634382b91aef81f6ac1, type: 3}
+  configTexts:
+  - id: config_debug
+    value: {fileID: 4900000, guid: b2dde323de0d8fd40beb8e12069a5623, type: 3}
+  - id: config_initial
+    value: {fileID: 4900000, guid: fe12fb0fdf229e5438f822ebc47f0d14, type: 3}
+  - id: config_ai
+    value: {fileID: 4900000, guid: 966257a12ba8fe7458cc3dd9b96a515b, type: 3}

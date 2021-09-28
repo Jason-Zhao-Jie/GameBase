@@ -3,28 +3,38 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SystemSettingPanel : MonoBehaviour
+namespace GameBase.View.Utility
 {
-    public Toggle musicMute;
-    public Slider musicVolume;
-    public Toggle soundMute;
-    public Slider soundVolume;
-    public InputField inputAIDelay;
-
-    // Start is called before the first frame update
-    void Start()
+    public class SystemSettingPanel : APanel
     {
-        
-    }
+        public Toggle musicMute;
+        public Slider musicVolume;
+        public Toggle soundMute;
+        public Slider soundVolume;
+        public InputField inputAIDelay;
 
-    public void OnSaveSetting()
-    {
-        
-    }
+        public override PanelType PanelType => PanelType.MessageBox;
 
-    public void OnClickClose()
-    {
-        transform.SetParent(null);
-        Destroy(gameObject);
+        // Start is called before the first frame update
+        protected void Start()
+        {
+            var settings = Present.GameMain.Instance.SystemSettings;
+            musicMute.isOn = settings.musicMute;
+            musicVolume.value = settings.musicVolume;
+            soundMute.isOn = !settings.soundMute;
+            soundVolume.value = settings.soundVolume;
+            inputAIDelay.text = settings.aiDelay.ToString();
+        }
+
+        public void OnSaveSetting()
+        {
+            var settings = Present.GameMain.Instance.SystemSettings;
+            settings.musicMute = musicMute.isOn;
+            settings.musicVolume = musicVolume.value;
+            settings.soundMute = !soundMute.isOn;
+            settings.soundVolume = soundVolume.value;
+            settings.aiDelay = System.Convert.ToSingle(inputAIDelay.text);
+            Present.GameMain.Instance.Notify(Common.Core.SystemEventType.OnSystemSettingChanged, settings);
+        }
     }
 }

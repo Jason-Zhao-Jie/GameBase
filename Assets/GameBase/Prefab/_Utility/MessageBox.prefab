@@ -86,6 +86,7 @@ GameObject:
   - component: {fileID: 508756541499306336}
   - component: {fileID: 508756541499306337}
   - component: {fileID: 645863661322540165}
+  - component: {fileID: 3366915921144735177}
   m_Layer: 5
   m_Name: MessageBox
   m_TagString: Untagged
@@ -186,6 +187,23 @@ MonoBehaviour:
   textMid: {fileID: 508756542445176675}
   btnRight: {fileID: 508756542758069614}
   textRight: {fileID: 508756543281329909}
+--- !u!114 &3366915921144735177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 508756541499306335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 187604053612cb44ea0f3e67c9fb66ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttons:
+  - {fileID: 508756543384183550}
+  - {fileID: 508756542498826636}
+  - {fileID: 508756542758069614}
+  sound: {fileID: 8300000, guid: 66f76d357e499504ba5c612d4ba367dd, type: 3}
 --- !u!1 &508756541577195322
 GameObject:
   m_ObjectHideFlags: 0
@@ -525,7 +543,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 2
 --- !u!1 &508756542758069612
 GameObject:
   m_ObjectHideFlags: 0
@@ -658,7 +676,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 2
 --- !u!1 &508756542838745301
 GameObject:
   m_ObjectHideFlags: 0
@@ -1056,4 +1074,4 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 2

@@ -73,7 +73,7 @@ namespace GameBase.View.Poker
                     }
                 }
                 callback();
-                // todo ≤•∑≈“Ù–ß
+                Present.GameMain.Instance.PlaySound(clickSound);
             }
         }
     }
