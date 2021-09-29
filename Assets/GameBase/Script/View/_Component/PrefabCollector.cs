@@ -14,7 +14,7 @@ namespace GameBase.View.Component
 
         public GameObject mainMenuPanel;
 
-        public GameObject gamePanel_huolong;
+        public GameObject gameSettingPanel_huolong;
 
         public GameObject poker_pokerCard;
         public GameObject poker_uiPokerCard;

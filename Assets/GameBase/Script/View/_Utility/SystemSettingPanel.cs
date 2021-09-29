@@ -33,7 +33,7 @@ namespace GameBase.View.Utility
             settings.musicVolume = musicVolume.value;
             settings.soundMute = !soundMute.isOn;
             settings.soundVolume = soundVolume.value;
-            settings.aiDelay = System.Convert.ToSingle(inputAIDelay.text);
+            settings.aiDelay = System.Convert.ToInt32(inputAIDelay.text);
             Present.GameMain.Instance.Notify(Common.Core.SystemEventType.OnSystemSettingChanged, settings);
         }
     }

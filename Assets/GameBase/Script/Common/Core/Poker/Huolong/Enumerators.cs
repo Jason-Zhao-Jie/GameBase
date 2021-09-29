@@ -85,7 +85,7 @@ namespace GameBase.Common.Core.Poker.Huolong
         FirstMatchShowStar,     // 首局亮王决定
         FirstMatchShowMain,     // 首局亮主打牌决定
         EveryMatchShowStar,     // 每局亮王改主花色
-        EveryMatchShowMain,     // 枚局亮主打牌决定主花色
+        EveryMatchShowMain,     // 每局亮主打牌决定主花色
         EveryMatchRandom,       // 首庄随机，主花色每局随机
         RandomMainPlayerWithColorSpade,     // 首庄随机，主花色固定为黑桃
         RandomMainPlayerWithColorHeart,     // 首庄随机，主花色固定为红桃

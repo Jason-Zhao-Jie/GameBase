@@ -8,6 +8,6 @@ namespace GameBase.Common.Core
         public bool musicMute;
         public float soundVolume;
         public bool soundMute;
-        public float aiDelay;
+        public int aiDelay;
     }
 }

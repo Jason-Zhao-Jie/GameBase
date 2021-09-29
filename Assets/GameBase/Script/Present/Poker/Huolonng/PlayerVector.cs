@@ -96,8 +96,7 @@ namespace GameBase.Present.Poker.Huolong
         {
             while (!token.IsCancellationRequested)
             {
-                // todo 这里要读取系统设定或者系统常量
-                await Task.Delay(GameSetting.aroundOverDelay);
+                await Task.Delay(GameMain.Instance.SystemSettings.aiDelay);
                 if (messages.Count > 0)
                 {
                     var msg = messages.Dequeue();

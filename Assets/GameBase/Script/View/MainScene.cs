@@ -16,11 +16,12 @@ namespace GameBase.View
         Utility.TipBar ShowWaiting(string text);
         T PushPanel<T>() where T : APanel;
         APanel PopPanel();
-        Utility.MessageBox ShowMessageBox(string textBtn1, System.Func<bool> callbackBtn1, string textBtn2 = null, System.Func<bool> callbackBtn2 = null, string textBtn3 = null, System.Func<bool> callbackBtn3 = null);
+        Utility.MessageBox ShowMessageBox(string contentText, string textBtn1, System.Func<bool> callbackBtn1, string textBtn2 = null, System.Func<bool> callbackBtn2 = null, string textBtn3 = null, System.Func<bool> callbackBtn3 = null);
         Utility.PlayerInfoPanel ShowPlayerInfoPanel(CharacterInfo info, bool isMe = false);
         Utility.SystemSettingPanel ShowSystemSettingPanel();
         MainMenuPanel ShowMainMenuPanel(MainMenuPanel.MenuType type);
-
+        APanel StartSettingGame(GameType type, int subType);
+        void StartGame<T>(GameType type, int subType, T gameSettings);
     }
 
     public class MainScene : MonoBehaviour, Present.IGameMain, IMain
@@ -67,6 +68,24 @@ namespace GameBase.View
             set
             {
                 Notify(SystemEventType.OnPlayerInfoChanged, value);
+            }
+        }
+
+        public System.ValueType GetDefaultGameSetting(GameType type, int subType, int index)
+        {
+            switch (type)
+            {
+                case GameType.Poker:
+                    var pokerSubType = (Common.Core.Poker.GameSubType)subType;
+                    switch (pokerSubType)
+                    {
+                        case Common.Core.Poker.GameSubType.Huolong:
+                            return initialConfig.huolongSetting[index];
+                        default:
+                            return default;
+                    }
+                default:
+                    return default;
             }
         }
 
@@ -253,10 +272,10 @@ namespace GameBase.View
             return ret;
         }
 
-        public Utility.MessageBox ShowMessageBox(string textBtn1, System.Func<bool> callbackBtn1, string textBtn2 = null, System.Func<bool> callbackBtn2 = null, string textBtn3 = null, System.Func<bool> callbackBtn3 = null)
+        public Utility.MessageBox ShowMessageBox(string contentText, string textBtn1, System.Func<bool> callbackBtn1, string textBtn2 = null, System.Func<bool> callbackBtn2 = null, string textBtn3 = null, System.Func<bool> callbackBtn3 = null)
         {
             var comp = PushPanel<Utility.MessageBox>();
-            comp.Init(textBtn1, callbackBtn1, textBtn2, callbackBtn2, textBtn3, callbackBtn3);
+            comp.Init(contentText, textBtn1, callbackBtn1, textBtn2, callbackBtn2, textBtn3, callbackBtn3);
             return comp;
         }
 
@@ -278,6 +297,43 @@ namespace GameBase.View
             var comp = PushPanel<MainMenuPanel>();
             comp.Type = type;
             return comp;
+        }
+
+        public APanel StartSettingGame(GameType type, int subType)
+        {
+            switch (type)
+            {
+                case GameType.Poker:
+                    var pokerSubType = (Common.Core.Poker.GameSubType)subType;
+                    switch (pokerSubType)
+                    {
+                        case Common.Core.Poker.GameSubType.Huolong:
+                            return PushPanel<Poker.Huolong.GameSettingPanel_Huolong>();
+                        default:
+                            return null;
+                    }
+                default:
+                    return null;
+            }
+        }
+
+        public void StartGame<T>(GameType type, int subType, T gameSettings)
+        {
+            switch (type)
+            {
+                case GameType.Poker:
+                    var pokerSubType = (Common.Core.Poker.GameSubType)subType;
+                    switch (pokerSubType)
+                    {
+                        case Common.Core.Poker.GameSubType.Huolong:
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
 
         #endregion Interfaces
@@ -313,7 +369,7 @@ namespace GameBase.View
 
             // 读取配置(临时)-初始化配置
             var initialText = ro.GetConfigText(ResourcesObject.config_initial).text;
-            var initialConfig = JsonUtility.FromJson<InitialData>(initialText);
+            initialConfig = JsonUtility.FromJson<InitialData>(initialText);
 
             // 读取存储-系统设定
             systemSettings = storage.SystemSettings;
@@ -337,7 +393,7 @@ namespace GameBase.View
             savedSetting_huolong = storage.GetGameSetting<Common.Core.Poker.Huolong.GameSetting>(GameType.Poker, (int)Common.Core.Poker.GameSubType.Huolong);
             if (savedSetting_huolong.playerNum == 0)
             {
-                savedSetting_huolong = initialConfig.huolongSetting;
+                savedSetting_huolong = initialConfig.huolongSetting[0];
                 storage.SetGameSetting(GameType.Poker, (int)Common.Core.Poker.GameSubType.Huolong, savedSetting_huolong);
             }
 
@@ -346,6 +402,7 @@ namespace GameBase.View
             prefabList.Add(typeof(Utility.PlayerInfoPanel), pc.playerInfoPanel);
             prefabList.Add(typeof(Utility.SystemSettingPanel), pc.systemSettingPanel);
             prefabList.Add(typeof(MainMenuPanel), pc.mainMenuPanel);
+            prefabList.Add(typeof(Poker.Huolong.GameSettingPanel_Huolong), pc.gameSettingPanel_huolong);
 
             // 自监听事件
             Listen(SystemEventType.OnSystemSettingChanged, OnSystemSettingChanged);
@@ -641,6 +698,7 @@ namespace GameBase.View
         private StorageManager storage = new StorageManager(new UnityStorage());
         private DebugData debug = new DebugData();
 
+        private InitialData initialConfig;
         private SystemSettings systemSettings;
         private CharacterInfo localUserInfo;
         private PlayerState localUserState;
@@ -676,7 +734,7 @@ namespace GameBase.View
         {
             public SystemSettings systemSetting;
             public CharacterInfo localUserInfo;
-            public Common.Core.Poker.Huolong.GameSetting huolongSetting;
+            public Common.Core.Poker.Huolong.GameSetting[] huolongSetting;
         }
 
         private struct EventData

@@ -24,7 +24,7 @@ namespace GameBase.Common.Model.Poker.Huolong
         public int RoundIndex { get; private set; } = 0;
         public int CurrentCamp { get; private set; } = 0;
         public int MainPoint => level[CurrentCamp];
-        public int OftenMainPoint => settings.isConstantMain ? Core.Poker.Helper.GetNextPoint(settings.endLevel) : 0;
+        public int OftenMainPoint => settings.isConstantMain ? (Core.Poker.Helper.GetNextPoint(settings.endLevel) == settings.startLevel ? settings.endLevel : Core.Poker.Helper.GetNextPoint(settings.endLevel)) : 0;
         public int MainPlayer => mainPlayers[CurrentCamp];
 
         #endregion 对局数据
@@ -403,21 +403,26 @@ namespace GameBase.Common.Model.Poker.Huolong
             }
             else if (numJoker1 >= settings.forceSendJokerLastCardsNum)
             {
-                // 超过强制摘星限制数量, 强制所有未摘大王的玩家摘大王
+                // 超过强制摘星限制数量, 强制所有玩家摘大王
                 for (var p = 0; p < roundCardLayout.Length; ++p)
                 {
-                    bool hasJoker1 = false;
-                    foreach (var c in roundCardLayout[p])
+                    if (p != MainPlayer)
                     {
-                        if (Core.Poker.Helper.GetColorPoint(c) == Core.Poker.Helper.Joker1)
-                        {
-                            hasJoker1 = true;
-                            break;
-                        }
-                    }
-                    if (!hasJoker1)
-                    {
+                        // 非庄家所有大王
+                        roundCardLayout[p].RemoveCards(roundCardLayout[p].GetColorPointCards(Core.Poker.Helper.Joker1));
                         roundCardLayout[p].PushCard(playerCardLayout[p].GetColorPointCards(Core.Poker.Helper.Joker1));
+                    }
+                    else
+                    {
+                        // 庄家交出未出的大王
+                        var joker1s = playerCardLayout[p].GetColorPointCards(Core.Poker.Helper.Joker1);
+                        foreach(var c in joker1s)
+                        {
+                            if (!roundCardLayout[p].Contains(c))
+                            {
+                                roundCardLayout[p].PushCard(c);
+                            }
+                        }
                     }
                 }
             }
@@ -460,56 +465,54 @@ namespace GameBase.Common.Model.Poker.Huolong
                     //依座次
                     for (int player = 0; player < settings.playerNum; ++player)
                     {
-                        int num = ret.pain[player].Length;
+                        int num = player == MainPlayer ? ret.pain[player].Length - settings.lastCardsNum : ret.pain[player].Length;
                         var gained = new List<int>();
                         bool gainedSuccess = true;
-                        if (player != MainPlayer)
+                        //补足对应数量的牌
+                        for (int i = 0; i < num; ++i)
                         {
-                            //补足对应数量的牌
-                            for (int i = 0; i < num; ++i)
+                            // 依次查找每一张底牌
+                            bool found = false;
+                            for (int cIndex = 0; cIndex < tryingCards.Count; ++cIndex)
                             {
-                                // 依次查找每一张底牌
-                                bool found = false;
-                                for (int cIndex = 0; cIndex < tryingCards.Count; ++cIndex)
+                                int c = tryingCards[cIndex];
+                                // 先检查牌的重复次数
+                                int repeated = 0;
+                                // 之前已返还的牌中重复
+                                foreach (var gainedC in gained)
                                 {
-                                    int c = tryingCards[cIndex];
-                                    // 先检查牌的重复次数
-                                    int repeated = 0;
-                                    // 之前已返还的牌中重复
-                                    foreach (var gainedC in gained)
+                                    if (Core.Poker.Helper.GetColorPoint(c) == Core.Poker.Helper.GetColorPoint(gainedC))
                                     {
-                                        if (Core.Poker.Helper.GetColorPoint(c) == Core.Poker.Helper.GetColorPoint(gainedC))
-                                        {
-                                            repeated++;
-                                        }
-                                    }
-                                    // 手牌中重复
-                                    foreach (var handC in playerCardLayout[player])
-                                    {
-                                        if (Core.Poker.Helper.GetColorPoint(c) == Core.Poker.Helper.GetColorPoint(handC))
-                                        {
-                                            repeated++;
-                                        }
-                                    }
-                                    if (repeated < allowed
-                                        && (Core.Poker.Helper.GetScore(c) == 0 || allowedRules > 0)
-                                        && (Core.Poker.Helper.GetScore(c) <= 5 || allowedRules > 1)
-                                        && (Core.Poker.Helper.GetColor(c) != CardColor.Joker || allowedRules > 2)
-                                        && (Core.Poker.Helper.GetColor(c) != CardColor.Joker || Core.Poker.Helper.GetPoint(c) != 1))
-                                    {
-                                        gained.Add(tryingCards[cIndex]);
-                                        tryingCards.RemoveAt(cIndex);
-                                        found = true;
-                                        break;
+                                        repeated++;
                                     }
                                 }
-                                if (!found)
+                                // 手牌中重复
+                                foreach (var handC in playerCardLayout[player])
                                 {
-                                    gainedSuccess = false;
+                                    if (Core.Poker.Helper.GetColorPoint(c) == Core.Poker.Helper.GetColorPoint(handC))
+                                    {
+                                        repeated++;
+                                    }
+                                }
+                                if (repeated < allowed
+                                    && (Core.Poker.Helper.GetScore(c) == 0 || allowedRules > 0)
+                                    && (Core.Poker.Helper.GetScore(c) <= 5 || allowedRules > 1)
+                                    && (Core.Poker.Helper.GetColor(c) != CardColor.Joker || allowedRules > 2)
+                                    && (Core.Poker.Helper.GetColor(c) != CardColor.Joker || Core.Poker.Helper.GetPoint(c) != 1))
+                                {
+                                    gained.Add(tryingCards[cIndex]);
+                                    tryingCards.RemoveAt(cIndex);
+                                    found = true;
                                     break;
                                 }
                             }
+                            if (!found)
+                            {
+                                gainedSuccess = false;
+                                break;
+                            }
                         }
+
                         if (gainedSuccess)
                         {
                             ret.gain[player] = gained.ToArray();
@@ -638,11 +641,13 @@ namespace GameBase.Common.Model.Poker.Huolong
         public RoundReport MakeRoundCalculate()
         {
             // 设定返回值
-            var ret = new RoundReport();
-            ret.roundIndex = RoundIndex;
-            ret.score = 0;
-            ret.winner = LeadPlayer;
-            ret.threwCards = new int[settings.playerNum][];
+            var ret = new RoundReport
+            {
+                roundIndex = RoundIndex,
+                score = 0,
+                winner = LeadPlayer,
+                threwCards = new int[settings.playerNum][]
+            };
             for (int i = 0; i < settings.playerNum; ++i)
             {
                 ret.threwCards[i] = roundCardLayout[i].GetAll();

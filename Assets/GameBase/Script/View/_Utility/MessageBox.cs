@@ -21,8 +21,9 @@ namespace GameBase.View.Utility
 
         public override PanelType PanelType => PanelType.MessageBox;
         
-        public void Init(string textBtnLeft, System.Func<bool> callbackLeft, string textBtnRight = null, System.Func<bool> callbackRight = null, string textBtnMid = null, System.Func<bool> callbackMid = null)
+        public void Init(string contentText, string textBtnLeft, System.Func<bool> callbackLeft, string textBtnRight = null, System.Func<bool> callbackRight = null, string textBtnMid = null, System.Func<bool> callbackMid = null)
         {
+            txtContent = contentText;
             txtLeft = textBtnLeft;
             OnClickLeft = callbackLeft;
             txtRight = textBtnRight;
@@ -82,6 +83,7 @@ namespace GameBase.View.Utility
 
         protected void Start()
         {
+            textContent.text = txtContent;
             textLeft.text = txtLeft;
             btnLeft.gameObject.SetActive(OnClickLeft != null);
             textRight.text = txtRight;
@@ -90,6 +92,7 @@ namespace GameBase.View.Utility
             btnMid.gameObject.SetActive(OnClickMid != null);
         }
 
+        private string txtContent;
         private string txtLeft;
         private string txtMid;
         private string txtRight;

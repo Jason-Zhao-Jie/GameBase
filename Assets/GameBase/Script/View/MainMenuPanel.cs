@@ -73,7 +73,7 @@ namespace GameBase.View
 
         public void OnClickStartSingle()
         {
-            MainScene.Instance.ShowTips("单机游戏功能正在开发中");
+            MainScene.Instance.StartSettingGame(Common.Core.GameType.Poker, (int)Common.Core.Poker.GameSubType.Huolong);
         }
 
         public void OnClickStartLocal()

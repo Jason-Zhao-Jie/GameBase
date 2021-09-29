@@ -6,3 +6,4 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Style", "IDE0066:将 switch 语句转换为表达式", Justification = "<挂起>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0090:使用 \"new(...)\"", Justification = "<挂起>", Scope = "module")]

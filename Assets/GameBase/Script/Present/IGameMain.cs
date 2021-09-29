@@ -7,6 +7,7 @@ namespace GameBase.Present
         bool IsDebug { get; }
         SystemSettings SystemSettings { get; set; }
         CharacterInfo LocalUserInfo { get; set; }
+        System.ValueType GetDefaultGameSetting(GameType type, int subType, int index);
         System.ValueType GetGameSetting(GameType type, int subType);
         void SetGameSetting(GameType type, int subType, System.ValueType settings);
         void PlayMusic(string audioKey, bool isUrl = false);
