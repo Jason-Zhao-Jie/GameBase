@@ -10,4 +10,8 @@ namespace GameBase.Common.Interface
         public Core.PlayerType PlayerType { get; }
         public void OnDispose();
     }
+    public interface IPlayerItem<T_PlayerVector>: IPlayerItem where T_PlayerVector : IPlayerVector_Item
+    {
+        void SetVector(T_PlayerVector vector);
+    }
 }

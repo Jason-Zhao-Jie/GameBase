@@ -2,9 +2,8 @@ using GameBase.Common.Core;
 
 namespace GameBase.Common.Interface.Poker.Huolong
 {
-    public interface IPlayerItem: Poker.IPlayerItem
+    public interface IPlayerItem<T_PlayerVector> : Poker.IPlayerItem<T_PlayerVector> where T_PlayerVector : IPlayerVector_Item
     {
-        public void SetVector(IPlayerVector_Item vector);
         public void OnGameStart();
         public void OnMatchStart();
         public void OnGetOneCard(int card);

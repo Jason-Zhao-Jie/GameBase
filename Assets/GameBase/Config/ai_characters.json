@@ -10,7 +10,9 @@
       "imageUrl": "",
       "imageId": 1,
       "copyright": true,
-      "baseWeight": 10,
+      "baseWeight": {
+        "0": 10
+      },
       "friendOthersRate": {
         "0": 1
       },
@@ -28,7 +30,9 @@
       "imageUrl": "",
       "imageId": 2,
       "copyright": true,
-      "baseWeight": 10,
+      "baseWeight": {
+        "0": 10
+      },
       "friendOthersRate": {
         "0": 1
       },
@@ -46,7 +50,9 @@
       "imageUrl": "",
       "imageId": 3,
       "copyright": true,
-      "baseWeight": 10,
+      "baseWeight": {
+        "0": 10
+      },
       "friendOthersRate": {
         "0": 1
       },
@@ -64,7 +70,9 @@
       "imageUrl": "",
       "imageId": 4,
       "copyright": true,
-      "baseWeight": 10,
+      "baseWeight": {
+        "0": 10
+      },
       "friendOthersRate": {
         "0": 1
       },
@@ -82,7 +90,9 @@
       "imageUrl": "",
       "imageId": 5,
       "copyright": false,
-      "baseWeight": 10,
+      "baseWeight": {
+        "0": 10
+      },
       "friendOthersRate": {
         "0": 1
       },
@@ -100,7 +110,9 @@
       "imageUrl": "",
       "imageId": 6,
       "copyright": false,
-      "baseWeight": 10,
+      "baseWeight": {
+        "0": 10
+      },
       "friendOthersRate": {
         "0": 1
       },
@@ -118,7 +130,9 @@
       "imageUrl": "",
       "imageId": 7,
       "copyright": false,
-      "baseWeight": 200,
+      "baseWeight": {
+        "0": 200
+      },
       "friendOthersRate": {
         "0": 0,
         "2102": 1
@@ -138,7 +152,9 @@
       "imageUrl": "",
       "imageId": 8,
       "copyright": false,
-      "baseWeight": 50,
+      "baseWeight": {
+        "0": 10
+      },
       "friendOthersRate": {
         "0": 0.5,
         "2101": 1
@@ -158,7 +174,9 @@
       "imageUrl": "",
       "imageId": 9,
       "copyright": false,
-      "baseWeight": 10,
+      "baseWeight": {
+        "0": 10
+      },
       "friendOthersRate": {
         "0": 1
       },
@@ -176,7 +194,9 @@
       "imageUrl": "",
       "imageId": 10,
       "copyright": false,
-      "baseWeight": 30,
+      "baseWeight": {
+        "0": 10
+      },
       "friendOthersRate": {
         "0": 0.7,
         "3002": 1
@@ -196,7 +216,9 @@
       "imageUrl": "",
       "imageId": 11,
       "copyright": false,
-      "baseWeight": 30,
+      "baseWeight": {
+        "0": 30
+      },
       "friendOthersRate": {
         "0": 0.6,
         "3002": 0.95
@@ -216,7 +238,9 @@
       "imageUrl": "",
       "imageId": 12,
       "copyright": false,
-      "baseWeight": 10,
+      "baseWeight": {
+        "0": 10
+      },
       "friendOthersRate": {
         "0": 1
       },
@@ -234,7 +258,9 @@
       "imageUrl": "",
       "imageId": 13,
       "copyright": false,
-      "baseWeight": 10,
+      "baseWeight": {
+        "0": 10
+      },
       "friendOthersRate": {
         "0": 1
       },
@@ -252,7 +278,9 @@
       "imageUrl": "",
       "imageId": 14,
       "copyright": false,
-      "baseWeight": 10,
+      "baseWeight": {
+        "0": 10
+      },
       "friendOthersRate": {
         "0": 1
       },
@@ -270,7 +298,9 @@
       "imageUrl": "",
       "imageId": 15,
       "copyright": false,
-      "baseWeight": 10,
+      "baseWeight": {
+        "0": 10
+      },
       "friendOthersRate": {
         "0": 1
       },
@@ -288,7 +318,9 @@
       "imageUrl": "",
       "imageId": 16,
       "copyright": false,
-      "baseWeight": 20,
+      "baseWeight": {
+        "0": 20
+      },
       "friendOthersRate": {
         "0": 0.9,
         "5002": 1
@@ -307,7 +339,9 @@
       "imageUrl": "",
       "imageId": 17,
       "copyright": false,
-      "baseWeight": 50,
+      "baseWeight": {
+        "0": 50
+      },
       "friendOthersRate": {
         "0": 0.6,
         "5001": 1
@@ -326,7 +360,9 @@
       "imageUrl": "",
       "imageId": 18,
       "copyright": false,
-      "baseWeight": 10,
+      "baseWeight": {
+        "0": 10
+      },
       "friendOthersRate": {
         "0": 1
       },
@@ -344,7 +380,9 @@
       "imageUrl": "",
       "imageId": 19,
       "copyright": false,
-      "baseWeight": 10,
+      "baseWeight": {
+        "0": 10
+      },
       "friendOthersRate": {
         "0": 1
       },
@@ -362,7 +400,9 @@
       "imageUrl": "",
       "imageId": 20,
       "copyright": false,
-      "baseWeight": 10,
+      "baseWeight": {
+        "0": 10
+      },
       "friendOthersRate": {
         "0": 1
       },

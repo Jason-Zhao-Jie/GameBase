@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GameBase.Present.Poker.Huolong
 {
-    public class PlayerVector : IPlayerVector_Controller, IPlayerVector_Item
+    public class PlayerVector : IPlayerVector_Controller, IPlayerVector_Item, Common.Interface.IPlayerVector<IPlayerItem<IPlayerVector_Item>, IPlayerVector_Item>
     {
 
         public GameType GameType => GameType.Poker;
@@ -55,7 +55,7 @@ namespace GameBase.Present.Poker.Huolong
             return true;
         }
 
-        public void SetPlayerItem(IPlayerItem playerItem)
+        public void SetPlayerItem(IPlayerItem<IPlayerVector_Item> playerItem)
         {
             this.playerItem = playerItem;
         }
@@ -166,7 +166,7 @@ namespace GameBase.Present.Poker.Huolong
         }
 
         private IController controller = null;
-        private IPlayerItem playerItem = null;
+        private IPlayerItem<IPlayerVector_Item> playerItem = null;
         private System.Threading.CancellationTokenSource token;
         private readonly Task<int> task = null;
         private readonly Queue<MessageData> messages = null;

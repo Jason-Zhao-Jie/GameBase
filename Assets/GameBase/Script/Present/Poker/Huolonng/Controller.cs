@@ -48,12 +48,20 @@ namespace GameBase.Present.Poker.Huolong
                 players[index].OnDispose();
             }
             players[index] = player;
+            player.PlayerIndex = index;
             player.SetController(this);
             return true;
         }
 
         public bool StartGame(GameSetting setting)
         {
+            for (int i = 0; i < setting.playerNum; ++i)
+            {
+                if (!players.ContainsKey(i) || players[i] == null)
+                {
+                    return false;
+                }
+            }
             model.InitGame(setting);
             for (int i = 0; i < model.Setting.playerNum; ++i)
             {

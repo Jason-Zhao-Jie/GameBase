@@ -15,13 +15,13 @@ namespace GameBase.View
         Utility.TipBar ShowTips(string text, float aliveTime = 2.0f);
         Utility.TipBar ShowWaiting(string text);
         T PushPanel<T>() where T : APanel;
-        APanel PopPanel();
+        APanel PopPanel(bool destroy = true);
         Utility.MessageBox ShowMessageBox(string contentText, string textBtn1, System.Func<bool> callbackBtn1, string textBtn2 = null, System.Func<bool> callbackBtn2 = null, string textBtn3 = null, System.Func<bool> callbackBtn3 = null);
         Utility.PlayerInfoPanel ShowPlayerInfoPanel(CharacterInfo info, bool isMe = false);
         Utility.SystemSettingPanel ShowSystemSettingPanel();
         MainMenuPanel ShowMainMenuPanel(MainMenuPanel.MenuType type);
         APanel StartSettingGame(GameType type, int subType);
-        void StartGame<T>(GameType type, int subType, T gameSettings);
+        void StartGame<T>(GameType type, int subType, T gameSettings, int playerNum) where T : struct;
     }
 
     public class MainScene : MonoBehaviour, Present.IGameMain, IMain
@@ -259,11 +259,14 @@ namespace GameBase.View
             return ret;
         }
 
-        public APanel PopPanel()
+        public APanel PopPanel(bool destroy = true)
         {
             var ret = panelStack.Pop();
             ret.transform.SetParent(null);
-            Destroy(ret.gameObject);
+            if (destroy)
+            {
+                Destroy(ret.gameObject);
+            }
             if (panelStack.Count > 0)
             {
                 var last = panelStack.Peek();
@@ -317,22 +320,73 @@ namespace GameBase.View
             }
         }
 
-        public void StartGame<T>(GameType type, int subType, T gameSettings)
+        public void StartGame<T>(GameType type, int subType, T gameSettings, int playerNum) where T : struct
         {
-            switch (type)
+            bool ok = false;
+            var gameId = GetGameId(GameType.Poker, (int)Common.Core.Poker.GameSubType.Huolong);
+            var panel = gamePanelList[gameId];
+            if (panel != null)
             {
-                case GameType.Poker:
-                    var pokerSubType = (Common.Core.Poker.GameSubType)subType;
-                    switch (pokerSubType)
-                    {
-                        case Common.Core.Poker.GameSubType.Huolong:
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                default:
-                    break;
+                ok = true;
+                var bar = Instantiate(panel, uiPanelRoot);
+                var ret = bar.GetComponent<AGamePanel>();
+                currentGamePanel = ret;
+                var playerIds = new int[playerNum];
+                // todo 加入本机玩家
+                switch (type)
+                {
+                    case GameType.Poker:
+                        var pokerSubType = (Common.Core.Poker.GameSubType)subType;
+                        switch (pokerSubType)
+                        {
+                            case Common.Core.Poker.GameSubType.Huolong:
+                                var ctrl = new Present.Poker.Huolong.Controller();
+                                if (currentGameController == null)
+                                {
+                                    currentGameController = ctrl;
+                                }
+                                for (int i = 1; i < playerNum; ++i)
+                                {
+                                    var item = new Present.Poker.Huolong.AIPlayerItem();
+                                    var vec = new Present.Poker.Huolong.PlayerVector();
+                                    vec.SetPlayerItem(item);
+                                    item.SetVector(vec);
+                                    vec.PlayerInfo = GetRandomAIInfo(gameId, playerIds, i, gameSettings);
+                                    playerIds[i] = vec.PlayerInfo.id;
+                                    ctrl.SetPlayer(i, vec);
+                                }
+                                currentGameController = ctrl;
+                                if (gameSettings is Common.Core.Poker.Huolong.GameSetting gs)
+                                {
+                                    if (!ctrl.StartGame(gs))
+                                    {
+                                        Common.PlatformInterface.Base.DebugError("玩家没有全部准备就绪");
+                                        ok = false;
+                                    }
+                                }
+                                else
+                                {
+                                    Common.PlatformInterface.Base.DebugError("传入配置参数不正确");
+                                    ok = false;
+                                }
+                                break;
+                            default:
+                                ok = false;
+                                break;
+                        }
+                        break;
+                    default:
+                        ok = false;
+                        break;
+                }
+
+            }
+            if (ok)
+            {
+                while (panelStack.Count > 0)
+                {
+                    PopPanel();
+                }
             }
         }
 
@@ -360,7 +414,7 @@ namespace GameBase.View
 
             // 读取配置-AI玩家
             var aiText = ro.GetConfigText(ResourcesObject.config_ai).text;
-            var aiConfig = JsonUtility.FromJson<AIConfigData>(aiText);
+            var aiConfig = JsonUtility.FromJson<AIConfigData>(aiText);  // todo 这里不对了, 读不到 dictionary 成员
             foreach (var ai in aiConfig.ais)
             {
                 aiCharactersMap.Add(ai.id, ai);
@@ -403,6 +457,8 @@ namespace GameBase.View
             prefabList.Add(typeof(Utility.SystemSettingPanel), pc.systemSettingPanel);
             prefabList.Add(typeof(MainMenuPanel), pc.mainMenuPanel);
             prefabList.Add(typeof(Poker.Huolong.GameSettingPanel_Huolong), pc.gameSettingPanel_huolong);
+
+            gamePanelList.Add(GetGameId(GameType.Poker, (int)Common.Core.Poker.GameSubType.Huolong), pc.gamePanel_huolong);
 
             // 自监听事件
             Listen(SystemEventType.OnSystemSettingChanged, OnSystemSettingChanged);
@@ -525,12 +581,24 @@ namespace GameBase.View
             {
                 if (!aiCharacterStatesMap[i.Key].online)
                 {
-                    var dt = new WeightRollingData();
-                    dt.id = i.Key;
-                    dt.min = weightTotal;
-                    dt.max = weightTotal + i.Value.baseWeight[gameId];
-                    weightTotal += i.Value.baseWeight[gameId];
-                    offlineList.Add(dt);
+                    var baseWeight = 0;
+                    if (i.Value.baseWeight.ContainsKey(gameId))
+                    {
+                        baseWeight = i.Value.baseWeight[gameId];
+                    }
+                    else if (i.Value.baseWeight.ContainsKey(0))
+                    {
+                        baseWeight = i.Value.baseWeight[0];
+                    }
+                    if(baseWeight > 0)
+                    {
+                        var dt = new WeightRollingData();
+                        dt.id = i.Key;
+                        dt.min = weightTotal;
+                        dt.max = weightTotal + baseWeight;
+                        weightTotal += i.Value.baseWeight[gameId];
+                        offlineList.Add(dt);
+                    }
                 }
             }
             CharacterInfo_AI ret = null;
@@ -557,7 +625,7 @@ namespace GameBase.View
                         {
                             case Common.Core.Poker.GameSubType.Huolong:
                                 {
-                                    var huolongSetting = (Common.Core.Poker.Huolong.GameSetting)gameSetting;
+                                    Common.Core.Poker.Huolong.GameSetting huolongSetting = (Common.Core.Poker.Huolong.GameSetting)gameSetting;
                                     var friends = new List<int>();
                                     var enemies = new List<int>();
 
@@ -690,7 +758,10 @@ namespace GameBase.View
         #region Private fields
 
         private readonly Dictionary<System.Type, GameObject> prefabList = new Dictionary<System.Type, GameObject>();
+        private readonly Dictionary<int, GameObject> gamePanelList = new Dictionary<int, GameObject>();
         private readonly Stack<APanel> panelStack = new Stack<APanel>();
+        private AGamePanel currentGamePanel = null;
+        private Common.Interface.IController currentGameController = null;
 
         private string currentPlayingMusic;
         private bool isCurrentPlayingMusicUrl;

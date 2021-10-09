@@ -7,7 +7,7 @@ using CardLayout = GameBase.Common.Core.Poker.Huolong.CardLayout;
 
 namespace GameBase.Present.Poker.Huolong
 {
-    public class AIPlayerItem : IPlayerItem
+    public class AIPlayerItem : IPlayerItem<IPlayerVector_Item>
     {
         public GameType GameType => GameType.Poker;
         public GameSubType GameSubType => GameSubType.Huolong;

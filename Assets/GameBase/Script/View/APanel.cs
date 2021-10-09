@@ -9,7 +9,7 @@ namespace GameBase.View
         PlayerInfoPanel,
         SystemSettingPanel,
         MainMenu,
-        GameSubPanel,
+        GameSettingPanel
     }
 
     public abstract class APanel : MonoBehaviour

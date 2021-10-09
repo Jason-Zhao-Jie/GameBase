@@ -1,3 +1,5 @@
+using GameBase.Common.Interface.Poker.Huolong;
+
 using System.Collections;
 using System.Collections.Generic;
 
@@ -68,7 +70,7 @@ namespace GameBase.View.Poker.Huolong
 
         #region Public Fields
 
-        public override PanelType PanelType => PanelType.GameSubPanel;
+        public override PanelType PanelType => PanelType.GameSettingPanel;
 
         public Common.Core.Poker.Huolong.GameSetting GameSetting
         {
@@ -104,7 +106,6 @@ namespace GameBase.View.Poker.Huolong
                         {
                             Common.PlatformInterface.Base.DebugError("错误的设定数据");
                         }
-                        dropPlayerCampNum.value = 0;
                         break;
                     case 8:
                         if (gameSetting.campNum == 2)
@@ -135,7 +136,40 @@ namespace GameBase.View.Poker.Huolong
                         break;
                 }
                 OnPlayerCampNumSelected();
-                // todo set ui
+                dropStartLevel.value = System.Convert.ToInt32(gameSetting.startLevel - 1);
+                OnStartLevelSelected();
+                tgNeedJokerLevel.isOn = gameSetting.jokerAfterEndLevel;
+                OnJokerLevelSelected();
+                dropMainColorWay.value = System.Convert.ToInt32(gameSetting.mainColorGetWay);
+                OnMainColorWaySelected();
+                inputForceLastCardsJokerNum.text = gameSetting.forceSendJokerLastCardsNum.ToString();
+                OnForceShowJokerNumChanged();
+                tgDoubleLastCardsScore.isOn = gameSetting.lastCardsScoreDouble;
+                OnDoubleLastCardsScoreSelected();
+                dropWinWay.value = System.Convert.ToInt32(gameSetting.winMatchWay);
+                OnWinWaySelected();
+                inputFullScore.text = gameSetting.fullScore.ToString();
+                OnFullScoreChanged();
+                inputNoLastCardsUpgrade.text = gameSetting.noLastCardsBaseUpgrade.ToString();
+                OnUpgradeScoreItemChanged(0);
+                inputNoStarsUpgrade.text = gameSetting.noJokerBaseUpgrade.ToString();
+                OnUpgradeScoreItemChanged(1);
+                inputNoHalfScoreUpgrade.text = gameSetting.noHalfScroreAddUpgrade.ToString();
+                OnUpgradeScoreItemChanged(2);
+                inputZeroScoreUpgrade.text = gameSetting.noScoreAddUpgrade.ToString();
+                OnUpgradeScoreItemChanged(3);
+                inputStarBaseUpgrade.text = gameSetting.haveJokerBaseUpgrade.ToString();
+                OnUpgradeScoreItemChanged(4);
+                inputJoker1Upgrade.text = gameSetting.joker1AddUpgrade.ToString();
+                OnUpgradeScoreItemChanged(5);
+                inputJoker2Upgrade.text = gameSetting.joker2AddUpgrade.ToString();
+                OnUpgradeScoreItemChanged(6);
+                tgRecord.isOn = gameSetting.recordThisMatch;
+                OnRecordSelected();
+                inputGiveCardDelay.text = gameSetting.firstRoundGiveCardsDelay.ToString();
+                OnGiveCardDelayChanged();
+                inputRoundDelay.text = gameSetting.aroundOverDelay.ToString();
+                OnRoundDelayChanged();
             }
         }
 
@@ -244,11 +278,7 @@ namespace GameBase.View.Poker.Huolong
 
         public void OnStartLevelSelected()
         {
-            gameSetting.startLevel = dropStartLevel.value + 3;
-            if (dropStartLevel.value > 10)
-            {
-                gameSetting.startLevel = dropStartLevel.value - 10;
-            }
+            gameSetting.startLevel = dropStartLevel.value + 1;
             dropEndLevel.ClearOptions();
             var options = new List<string>();
             int found = -1;
@@ -291,7 +321,7 @@ namespace GameBase.View.Poker.Huolong
             {
                 gameSetting.endLevel -= 13;
             }
-            if(dropEndLevel.value == 11)
+            if (dropEndLevel.value == 11)
             {
                 textConstantMain.text = Common.Core.Poker.Helper.PointToString(gameSetting.endLevel) + "为常主";
             }
@@ -299,32 +329,63 @@ namespace GameBase.View.Poker.Huolong
             {
                 textConstantMain.text = gameSetting.startLevel == 1 ? "K为常主" : (Common.Core.Poker.Helper.PointToString(gameSetting.startLevel - 1) + "为常主");
             }
-            for(int i = 1; i < 13; ++i)
+            var found = new List<int>();
+            for (int i = 0; i < tgThresholds.Length; ++i)
             {
-                if(i< dropEndLevel.value)
+                int p = gameSetting.startLevel + i;
+                if (p > 13)
+                {
+                    p -= 13;
+                }
+                textThresholds[i].text = Common.Core.Poker.Helper.PointToString(p);
+                if (i > dropEndLevel.value + 1)
                 {
                     tgThresholds[i].isOn = false;
-                    OnThresholdLevelSelected(tgThresholds[i]);
                     tgThresholds[i].gameObject.SetActive(false);
                 }
                 else
                 {
                     tgThresholds[i].gameObject.SetActive(true);
+                    if (gameSetting.thresholdsLevels != null && gameSetting.thresholdsLevels.Length > 0)
+                    {
+                        for (int n = 0; n < gameSetting.thresholdsLevels.Length; ++n)
+                        {
+                            if (gameSetting.thresholdsLevels[n] == p)
+                            {
+                                found.Add(i);
+                                break;
+                            }
+                        }
+                    }
                 }
+            }
+            for (int i = 0; i < tgThresholds.Length; ++i)
+            {
+                tgThresholds[i].isOn = false;
+            }
+                foreach (var p in found)
+            {
+                tgThresholds[p].isOn = true;
             }
             OnConstantMainSelected();
         }
 
         public void OnJokerLevelSelected()
         {
-            gameSetting.jokerAfterEndLevel = tgNeedJokerLevel.isOn;
-            RefreshComments();
+            if (gameSetting.campNum > 0)
+            {
+                gameSetting.jokerAfterEndLevel = tgNeedJokerLevel.isOn;
+                RefreshComments();
+            }
         }
 
         public void OnConstantMainSelected()
         {
-            gameSetting.isConstantMain = tgConstantMain.isOn;
-            RefreshComments();
+            if (gameSetting.campNum > 0)
+            {
+                gameSetting.isConstantMain = tgConstantMain.isOn;
+                RefreshComments();
+            }
         }
 
         public void RefreshComments()
@@ -346,38 +407,115 @@ namespace GameBase.View.Poker.Huolong
 
         public void OnMainColorWaySelected()
         {
-
+            gameSetting.mainColorGetWay = (Common.Core.Poker.Huolong.MainColorGetWay)dropMainColorWay.value;
+            switch (gameSetting.mainColorGetWay)
+            {
+                case Common.Core.Poker.Huolong.MainColorGetWay.AllRandom:
+                case Common.Core.Poker.Huolong.MainColorGetWay.EveryMatchRandom:
+                case Common.Core.Poker.Huolong.MainColorGetWay.RandomMainPlayerWithColorSpade:
+                case Common.Core.Poker.Huolong.MainColorGetWay.RandomMainPlayerWithColorHeart:
+                case Common.Core.Poker.Huolong.MainColorGetWay.RandomMainPlayerWithColorCube:
+                case Common.Core.Poker.Huolong.MainColorGetWay.RandomMainPlayerWithColorDiamond:
+                    inputGiveCardDelay.interactable = false;
+                    break;
+                case Common.Core.Poker.Huolong.MainColorGetWay.FirstMatchShowStar:
+                case Common.Core.Poker.Huolong.MainColorGetWay.FirstMatchShowMain:
+                case Common.Core.Poker.Huolong.MainColorGetWay.EveryMatchShowStar:
+                case Common.Core.Poker.Huolong.MainColorGetWay.EveryMatchShowMain:
+                    inputGiveCardDelay.interactable = true;
+                    break;
+            }
         }
 
         public void OnForceShowJokerNumChanged()
         {
-
+            gameSetting.forceSendJokerLastCardsNum = System.Convert.ToInt32(inputForceLastCardsJokerNum.text);
         }
 
         public void OnDoubleLastCardsScoreSelected()
         {
-
+            gameSetting.lastCardsScoreDouble = tgDoubleLastCardsScore.isOn;
         }
 
         public void OnWinWaySelected()
         {
-
+            gameSetting.winMatchWay = (Common.Core.Poker.Huolong.WinMatchWay)dropWinWay.value;
         }
 
         public void OnFullScoreChanged()
         {
-
+            gameSetting.fullScore = System.Convert.ToInt32(inputFullScore.text);
         }
 
         public void OnUpgradeScoreItemChanged(int id)
         {
             var type = (UpgradeScoreItemType)id;
-
+            switch (type)
+            {
+                case UpgradeScoreItemType.NoLastCards:
+                    gameSetting.noLastCardsBaseUpgrade = System.Convert.ToInt32(inputNoLastCardsUpgrade.text);
+                    break;
+                case UpgradeScoreItemType.NoStar:
+                    gameSetting.noJokerBaseUpgrade = System.Convert.ToInt32(inputNoStarsUpgrade.text);
+                    break;
+                case UpgradeScoreItemType.NoHalfScore:
+                    gameSetting.noHalfScroreAddUpgrade = System.Convert.ToInt32(inputNoHalfScoreUpgrade.text);
+                    break;
+                case UpgradeScoreItemType.ZeroScore:
+                    gameSetting.noScoreAddUpgrade = System.Convert.ToInt32(inputZeroScoreUpgrade.text);
+                    break;
+                case UpgradeScoreItemType.BaseStar:
+                    gameSetting.haveJokerBaseUpgrade = System.Convert.ToInt32(inputStarBaseUpgrade.text);
+                    break;
+                case UpgradeScoreItemType.Joker1:
+                    gameSetting.joker1AddUpgrade = System.Convert.ToInt32(inputJoker1Upgrade.text);
+                    break;
+                case UpgradeScoreItemType.Joker2:
+                    gameSetting.joker2AddUpgrade = System.Convert.ToInt32(inputJoker2Upgrade.text);
+                    break;
+            }
         }
 
         public void OnThresholdLevelSelected(Toggle sender)
         {
+            var list = new List<int>();
+            for (int i = 0; i < tgThresholds.Length; ++i)
+            {
+                int p = gameSetting.startLevel + i;
+                if (p > 13)
+                {
+                    p -= 13;
+                }
+                if (tgThresholds[i].isOn)
+                {
+                    list.Add(p);
+                }
+            }
 
+            var settings = new List<bool>();
+            settings.Add(gameSetting.downgradeByJoker1);
+            settings.Add(gameSetting.downgradeByJoker2);
+            settings.Add(gameSetting.downgradeByMainCP);
+            settings.Add(gameSetting.downgradeByUnMainCP);
+            settings.Add(gameSetting.downgradeByMainConstantMain);
+            settings.Add(gameSetting.downgradeByUnMainConstantMain);
+
+            tgJoker1Downgrade.isOn = settings[0];
+            tgJoker2Downgrade.isOn = settings[1];
+            tgMPDowngrade.isOn = settings[2];
+            tgUMPDowngrade.isOn = settings[3];
+            tgMCDowngrade.isOn = settings[4];
+            tgUMCDowngrade.isOn = settings[5];
+
+            tgJoker1Downgrade.interactable = list.Count > 0;
+            tgJoker2Downgrade.interactable = list.Count > 0;
+            tgMPDowngrade.interactable = list.Count > 0;
+            tgUMPDowngrade.interactable = list.Count > 0;
+            tgMCDowngrade.interactable = list.Count > 0;
+            tgUMCDowngrade.interactable = list.Count > 0;
+
+            gameSetting.thresholdsLevels = list.ToArray();
+            OnDowngradeWaySelected(0);
         }
 
         public void OnDowngradeWaySelected(int id)
@@ -415,7 +553,7 @@ namespace GameBase.View.Poker.Huolong
 
         public void OnClickGo()
         {
-
+            MainScene.Instance.StartGame(Common.Core.GameType.Poker, (int)Common.Core.Poker.GameSubType.Huolong, gameSetting, gameSetting.playerNum);
         }
 
         #endregion Components Events
@@ -441,7 +579,7 @@ namespace GameBase.View.Poker.Huolong
 
         private Common.Core.Poker.Huolong.GameSetting gameSetting;
         private readonly Dictionary<HelpTipType, string> helpTips = new Dictionary<HelpTipType, string>() {
-            {HelpTipType.NeedJokerLevel, "" },
+            {HelpTipType.NeedJokerLevel, "\u3000\u3000如果选择打王级，则在最终级顺利过关后，还需要打一级王级才能通关。\n\u3000\u3000打王级时，没有主花色，主牌只有王牌和常主牌。\n\u3000\u3000同门槛级一样，王级不可跨越，但不会降级。" },
             {HelpTipType.ColorWay, "" },
             {HelpTipType.ForceJokerLastCards, "" },
             {HelpTipType.WinWay, "" },
@@ -449,6 +587,7 @@ namespace GameBase.View.Poker.Huolong
             {HelpTipType.ThresholdLevel, "" },
             {HelpTipType.DowngradeWay, "" },
         };   // todo 填充提示文字
+
         private readonly int[][] groupNumItemsOfPlayerCampNum = new int[][]
         {
             new int[]{2,3,4,5,6},
@@ -458,6 +597,7 @@ namespace GameBase.View.Poker.Huolong
             new int[]{4,5,6,7,8,9,10},
             new int[]{5,6,7,8,9,10,11,12},
         };
+
         private readonly int[][][] lastCardsNumItems = new int[][][]
         {
             new int[][]{
@@ -550,7 +690,6 @@ namespace GameBase.View.Poker.Huolong
             MC,
             UMC,
         }
-
 
         #endregion Classes And Enums
     }
