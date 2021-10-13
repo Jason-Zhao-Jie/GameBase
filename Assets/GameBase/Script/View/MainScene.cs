@@ -323,7 +323,7 @@ namespace GameBase.View
         public void StartGame<T>(GameType type, int subType, T gameSettings, int playerNum) where T : struct
         {
             bool ok = false;
-            var gameId = GetGameId(GameType.Poker, (int)Common.Core.Poker.GameSubType.Huolong);
+            var gameId = GetGameId(type, subType);
             var panel = gamePanelList[gameId];
             if (panel != null)
             {
@@ -332,7 +332,6 @@ namespace GameBase.View
                 var ret = bar.GetComponent<AGamePanel>();
                 currentGamePanel = ret;
                 var playerIds = new int[playerNum];
-                // todo 加入本机玩家
                 switch (type)
                 {
                     case GameType.Poker:
@@ -340,34 +339,56 @@ namespace GameBase.View
                         switch (pokerSubType)
                         {
                             case Common.Core.Poker.GameSubType.Huolong:
-                                var ctrl = new Present.Poker.Huolong.Controller();
-                                if (currentGameController == null)
                                 {
-                                    currentGameController = ctrl;
-                                }
-                                for (int i = 1; i < playerNum; ++i)
-                                {
-                                    var item = new Present.Poker.Huolong.AIPlayerItem();
-                                    var vec = new Present.Poker.Huolong.PlayerVector();
-                                    vec.SetPlayerItem(item);
-                                    item.SetVector(vec);
-                                    vec.PlayerInfo = GetRandomAIInfo(gameId, playerIds, i, gameSettings);
-                                    playerIds[i] = vec.PlayerInfo.id;
-                                    ctrl.SetPlayer(i, vec);
-                                }
-                                currentGameController = ctrl;
-                                if (gameSettings is Common.Core.Poker.Huolong.GameSetting gs)
-                                {
-                                    if (!ctrl.StartGame(gs))
+                                    // controller
+                                    var ctrl = new Present.Poker.Huolong.Controller();
+                                    if (currentGameController == null)
                                     {
-                                        Common.PlatformInterface.Base.DebugError("玩家没有全部准备就绪");
+                                        currentGameController = ctrl;
+                                    }
+
+                                    // 本机 player
+                                    var hostItem = ret.GetComponent<Poker.Huolong.GamePanel_Huolong>();
+                                    var hostVec = new Present.Poker.Huolong.PlayerVector();
+                                    hostVec.SetPlayerItem(hostItem);
+                                    hostItem.SetVector(hostVec);
+                                    hostVec.PlayerInfo = localUserInfo;
+                                    playerIds[0] = hostVec.PlayerInfo.id;
+                                    ctrl.SetPlayer(0, hostVec);
+                                    Notify(SystemEventType.OnPlayerOnline, playerIds[0]);
+                                    Notify(SystemEventType.OnPlayerEnterGame, playerIds[0], (int)type, subType, 0);
+
+                                    // AI player
+                                    for (int i = 1; i < playerNum; ++i)
+                                    {
+                                        var item = new Present.Poker.Huolong.AIPlayerItem();
+                                        var vec = new Present.Poker.Huolong.PlayerVector();
+                                        vec.SetPlayerItem(item);
+                                        item.SetVector(vec);
+                                        vec.PlayerInfo = GetRandomAIInfo(GameType.Poker, (int)Common.Core.Poker.GameSubType.Huolong, playerIds, i, gameSettings);
+                                        playerIds[i] = vec.PlayerInfo.id;
+                                        ctrl.SetPlayer(i, vec);
+                                    }
+
+                                    // start
+                                    if (gameSettings is Common.Core.Poker.Huolong.GameSetting gs)
+                                    {
+                                        if (!ctrl.StartGame(gs))
+                                        {
+                                            Common.PlatformInterface.Base.DebugError("玩家没有全部准备就绪");
+                                            ok = false;
+                                            // todo 处理后续清理
+                                        }
+                                        else
+                                        {
+                                            // 开始游戏成功
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Common.PlatformInterface.Base.DebugError("传入配置参数不正确");
                                         ok = false;
                                     }
-                                }
-                                else
-                                {
-                                    Common.PlatformInterface.Base.DebugError("传入配置参数不正确");
-                                    ok = false;
                                 }
                                 break;
                             default:
@@ -414,7 +435,7 @@ namespace GameBase.View
 
             // 读取配置-AI玩家
             var aiText = ro.GetConfigText(ResourcesObject.config_ai).text;
-            var aiConfig = JsonUtility.FromJson<AIConfigData>(aiText);  // todo 这里不对了, 读不到 dictionary 成员
+            var aiConfig = JsonUtility.FromJson<AIConfigData>(aiText);
             foreach (var ai in aiConfig.ais)
             {
                 aiCharactersMap.Add(ai.id, ai);
@@ -464,7 +485,9 @@ namespace GameBase.View
             Listen(SystemEventType.OnSystemSettingChanged, OnSystemSettingChanged);
             Listen(SystemEventType.OnMyInfoChanged, OnPlayerInfoChanged);
             Listen(SystemEventType.OnPlayerInfoChanged, OnPlayerInfoChanged);
+            Listen(SystemEventType.OnPlayerEnterGame, OnPlayerEnterGame);
             Listen(SystemEventType.OnPlayerExitGame, OnPlayerExitGame);
+            Listen(SystemEventType.OnPlayerOnline, OnPlayerOnline);
             Listen(SystemEventType.OnPlayerOffline, OnPlayerOffline);
 
             ShowMainMenuPanel(MainMenuPanel.MenuType.Start);
@@ -512,35 +535,84 @@ namespace GameBase.View
             }
         }
 
-        private void OnPlayerExitGame(object[] data)
+        private void OnPlayerEnterGame(object[] data)
         {
             var id = (int)data[0];
-            if (!aiCharacterStatesMap.ContainsKey(id))
+            var gameType = (GameType)data[1];
+            var gameSubType = (int)data[2];
+            var seat = (int)data[3];
+            if (localUserInfo.id == id)
             {
-                var ai_state = aiCharacterStatesMap[id];
-                ai_state.game = GameType.Unknown;
-                ai_state.subType = 0;
-                Notify(SystemEventType.OnPlayerOffline, id);
+                localUserState.game = gameType;
+                localUserState.subType = gameSubType;
+                localUserState.seat = seat;
+                Common.PlatformInterface.Base.DebugInfo("本机玩家加入游戏");
             }
-            else if (localUserInfo.id == id)
+            else if (aiCharacterStatesMap.ContainsKey(id))
+            {
+                Common.PlatformInterface.Base.DebugInfo("AI玩家【" + aiCharactersMap[id].name + "】" + "加入游戏");
+            }
+            else
+            {
+                Common.PlatformInterface.Base.DebugInfo("未知类型玩家加入游戏，id：" + id);
+            }
+        }
+
+        private void OnPlayerExitGame(object[] data)
+        {
+            var id = (int)data[0]; 
+            if(localUserInfo.id == id)
             {
                 localUserState.game = GameType.Unknown;
                 localUserState.subType = 0;
+                localUserState.seat = 0;
+                Common.PlatformInterface.Base.DebugInfo("本机玩家离开游戏");
+            }
+            else if (aiCharacterStatesMap.ContainsKey(id))
+            {
+                SetAIOnline(id, false, GameType.Unknown, 0, 0);
+                Notify(SystemEventType.OnPlayerOffline, id);
+                Common.PlatformInterface.Base.DebugInfo("AI玩家【" + aiCharactersMap[id].name + "】" + "离开游戏");
+            }
+            else
+            {
+                Common.PlatformInterface.Base.DebugInfo("未知类型玩家离开游戏，id：" + id);
+            }
+        }
+
+        private void OnPlayerOnline(object[] data)
+        {
+            var id = (int)data[0];
+            if (localUserInfo.id == id)
+            {
+                Common.PlatformInterface.Base.DebugWarning("为什么会收到本机玩家上线的事件？");
+                localUserState.online = true;
+            }
+            else if (aiCharacterStatesMap.ContainsKey(id))
+            {
+                Common.PlatformInterface.Base.DebugInfo("AI玩家上线：" + aiCharactersMap[id].name);
+            }
+            else
+            {
+                Common.PlatformInterface.Base.DebugInfo("未知类型玩家上线，id：" + id);
             }
         }
 
         private void OnPlayerOffline(object[] data)
         {
             var id = (int)data[0];
-            if (!aiCharacterStatesMap.ContainsKey(id))
-            {
-                var ai_state = aiCharacterStatesMap[id];
-                ai_state.online = false;
-            }
-            else if (localUserInfo.id == id)
+            if (localUserInfo.id == id)
             {
                 Common.PlatformInterface.Base.DebugWarning("为什么会收到本机玩家下线的事件？");
                 localUserState.online = false;
+            }
+            else if (aiCharacterStatesMap.ContainsKey(id))
+            {
+                Common.PlatformInterface.Base.DebugInfo("AI玩家下线：" + aiCharactersMap[id].name);
+            }
+            else
+            {
+                Common.PlatformInterface.Base.DebugInfo("未知类型玩家下线，id：" + id);
             }
         }
 
@@ -572,8 +644,9 @@ namespace GameBase.View
             return gameId % 1000;
         }
 
-        private CharacterInfo_AI GetRandomAIInfo(int gameId, int[] currentPlayers, int seat, System.ValueType gameSetting)
+        private CharacterInfo_AI GetRandomAIInfo(GameType game, int gameSubType, int[] currentPlayers, int seat, System.ValueType gameSetting)
         {
+            var gameId = GetGameId(GameType.Poker, (int)Common.Core.Poker.GameSubType.Huolong);
             var offlineList = new List<WeightRollingData>();
             int weightTotal = 0;
             // 挑选可选的AI
@@ -581,22 +654,14 @@ namespace GameBase.View
             {
                 if (!aiCharacterStatesMap[i.Key].online)
                 {
-                    var baseWeight = 0;
-                    if (i.Value.baseWeight.ContainsKey(gameId))
-                    {
-                        baseWeight = i.Value.baseWeight[gameId];
-                    }
-                    else if (i.Value.baseWeight.ContainsKey(0))
-                    {
-                        baseWeight = i.Value.baseWeight[0];
-                    }
-                    if(baseWeight > 0)
+                    var baseWeight = i.Value.GetBaseWeight(gameId);
+                    if (baseWeight > 0)
                     {
                         var dt = new WeightRollingData();
                         dt.id = i.Key;
                         dt.min = weightTotal;
-                        dt.max = weightTotal + baseWeight;
-                        weightTotal += i.Value.baseWeight[gameId];
+                        weightTotal += baseWeight;
+                        dt.max = weightTotal;
                         offlineList.Add(dt);
                     }
                 }
@@ -608,12 +673,14 @@ namespace GameBase.View
                 var randRes = new System.Random();
                 var randVal = randRes.Next(0, weightTotal - 1);
                 int rolledId = 0;
+                int rolledIndex = -1;
                 for(int i = 0; i < offlineList.Count; ++i)
                 {
                     var dt = offlineList[i];
                     if(dt.min<=randVal && dt.max > randVal)
                     {
                         rolledId = dt.id;
+                        rolledIndex = i;
                     }
                 }
                 // 被抓取的AI根据已入座的情况，选择是否加入游戏，这同时会检测当前已在场玩家的意愿（只检测是否为0）
@@ -653,6 +720,15 @@ namespace GameBase.View
                                     }
                                     else
                                     {
+                                        bool haveSpecial = false;
+                                        foreach (var id in friends)
+                                        {
+                                            if (ret.friendOthersRate.ContainsKey(id))
+                                            {
+                                                haveSpecial = true;
+                                                break;
+                                            }
+                                        }
                                         foreach (var id in friends)
                                         {
                                             if (ret.friendOthersRate.ContainsKey(id))
@@ -661,7 +737,10 @@ namespace GameBase.View
                                             }
                                             else if (ret.friendOthersRate.ContainsKey(0))
                                             {
-                                                finalRate *= ret.friendOthersRate[0];
+                                                if (ret.friendOthersRate[0] > 0 || !haveSpecial)
+                                                {
+                                                    finalRate *= ret.friendOthersRate[0];
+                                                }
                                             }
                                             if (aiCharactersMap.ContainsKey(id))
                                             {
@@ -669,13 +748,6 @@ namespace GameBase.View
                                                 if (hisInfo.friendOthersRate.ContainsKey(rolledId))
                                                 {
                                                     if (hisInfo.friendOthersRate[id] == 0)
-                                                    {
-                                                        finalRate = 0;
-                                                    }
-                                                }
-                                                else if (hisInfo.friendOthersRate.ContainsKey(0))
-                                                {
-                                                    if (hisInfo.friendOthersRate[0] == 0)
                                                     {
                                                         finalRate = 0;
                                                     }
@@ -722,12 +794,14 @@ namespace GameBase.View
                                     var agree = randRes.NextDouble() < finalRate;
                                     if (agree)
                                     {
-                                        Common.PlatformInterface.Base.DebugInfo("AI玩家【" + ret.name + "】" + "加入了游戏");
+                                        SetAIOnline(ret.id, true, game, gameSubType, seat);
+                                        Notify(SystemEventType.OnPlayerOnline, ret.id);
+                                        Notify(SystemEventType.OnPlayerEnterGame, ret.id, (int)game, gameSubType, seat);
                                     }
                                     else
                                     {
                                         Common.PlatformInterface.Base.DebugInfo("摇到了【" + ret.name + "】,但" + (ret.gender == Gender.Female ? "她" : "他") + "不愿意加入游戏，重新寻找");
-                                        int minusValue = ret.baseWeight[gameId];
+                                        int minusValue = ret.GetBaseWeight(gameId);
                                         ret = null;
                                         for (int i = 0; i < offlineList.Count; ++i)
                                         {
@@ -739,6 +813,7 @@ namespace GameBase.View
                                             }
                                         }
                                         weightTotal -= minusValue;
+                                        offlineList.RemoveAt(rolledIndex);
                                     }
                                 }
                                 break;
@@ -797,6 +872,7 @@ namespace GameBase.View
         [System.Serializable]
         private struct AIConfigData
         {
+            [SerializeField]
             public CharacterInfo_AI[] ais;
         }
 
@@ -820,7 +896,7 @@ namespace GameBase.View
             public System.Action<object[]> callback;
         }
 
-        private struct WeightRollingData
+        private class WeightRollingData
         {
             public int id;
             public int min;

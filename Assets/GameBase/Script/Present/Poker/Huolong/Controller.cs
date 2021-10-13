@@ -43,11 +43,12 @@ namespace GameBase.Present.Poker.Huolong
 
         public bool SetPlayer(int index, IPlayerVector_Controller player)
         {
-            if (players[index] != null)
+            if (players.ContainsKey(index) && players[index] != null)
             {
                 players[index].OnDispose();
+                players.Remove(index);
             }
-            players[index] = player;
+            players.Add(index, player);
             player.PlayerIndex = index;
             player.SetController(this);
             return true;

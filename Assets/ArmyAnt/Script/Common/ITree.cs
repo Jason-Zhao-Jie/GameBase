@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ArmyAnt.Algorithm
+namespace ArmyAnt.Common
 {
 
     public enum ETreeTraversalWay

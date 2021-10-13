@@ -6,7 +6,9 @@ namespace GameBase.Common.Core
         OnMyInfoChanged,
         OnPlayerInfoChanged,
         OnSystemSettingChanged,
+        OnPlayerEnterGame,
         OnPlayerExitGame,
+        OnPlayerOnline,
         OnPlayerOffline,
     }
 

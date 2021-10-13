@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace ArmyAnt.Algorithm
+namespace ArmyAnt.Common
 {
 
     public class LinkedTree<T_Tag, T_Val> : ITree<T_Tag, T_Val>

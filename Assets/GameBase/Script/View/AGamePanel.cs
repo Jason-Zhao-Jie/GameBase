@@ -1,13 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
+using GameBase.Common.Core;
+using GameBase.Common.Interface;
+
 using UnityEngine;
 
 namespace GameBase.View
 {
-    public abstract class AGamePanel : MonoBehaviour
+    public abstract class AGamePanel : MonoBehaviour, IPlayerItem
     {
-        public abstract Common.Core.GameType GameType { get; }
+        public abstract GameType GameType { get; }
         public abstract int GameSubType { get; }
+
+        public PlayerType PlayerType => PlayerType.HostPlayer;
+
+        public virtual void OnDispose()
+        {
+            Close(true);
+        }
 
         public virtual GameObject Close(bool destroy = true)
         {
@@ -18,5 +26,6 @@ namespace GameBase.View
             }
             return gameObject;
         }
+
     }
 }
