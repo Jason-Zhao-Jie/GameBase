@@ -4,7 +4,7 @@ using GameBase.Common.Interface.Poker;
 
 using UnityEngine;
 
-namespace GameBase.View
+namespace GameBase.View.Poker
 {
     public abstract class APokerGamePanel : AGamePanel, IPlayerItem<IPlayerVector_Item>
     {

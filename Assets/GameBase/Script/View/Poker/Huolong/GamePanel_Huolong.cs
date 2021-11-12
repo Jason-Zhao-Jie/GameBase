@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
 using GameBase.Common.Interface.Poker.Huolong;
 using GameBase.Common.Core.Poker;
 using GameBase.Common.Core.Poker.Huolong;
@@ -12,9 +8,11 @@ namespace GameBase.View.Poker.Huolong
     {
         #region Inspector Fields
 
-        public GameObject gameStateInfo;
-        public GameObject[] headInfo;
-        public GameObject myStateInfo;
+        public GameStateZone_Huolong gameStateZone;
+        public MenuZone_Huolong menuZone;
+        public MyStateZone_Huolong myStateZone;
+        public TipZone_Huolong tipZone;
+        public PlayerHead_Huolong[] heads;
 
         #endregion Inspector Fields
 
@@ -129,5 +127,7 @@ namespace GameBase.View.Poker.Huolong
         #endregion Unity Events
 
         private IPlayerVector_Item vector = null;
+
+        private WorldPokerManager worldPokerManager;
     }
 }
