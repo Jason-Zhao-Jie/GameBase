@@ -10,7 +10,8 @@ namespace GameBase.View.Poker.Huolong
         public Image avatarIcon;
         public Text playerName;
         public GameObject mainFlag;
-        public Text campIndex;
+        public Text campIndexTitle;
+        public Image campIndexImage;
         public Text level;
         public Text score;
 
@@ -43,17 +44,22 @@ namespace GameBase.View.Poker.Huolong
 
         public void SetCampIndex(int index)
         {
-            campIndex.text = string.Format("队伍{0}", index);
+            campIndexTitle.text = "队伍:";
+            playerName.color = indexColor[index];
+            campIndexTitle.color = indexColor[index];
+            campIndexImage.color = indexColor[index];
+            level.color = indexColor[index];
+            score.color = indexColor[index];
         }
 
         public void SetLevel(int level)
         {
-            this.level.text = string.Format("等级{0}", level);
+            this.level.text = string.Format("等级:{0}", level);
         }
 
         public void SetScore(int score)
         {
-            this.score.text = string.Format("得分{0}", score);
+            this.score.text = string.Format("得分:{0}", score);
         }
 
         public void OnClick()
@@ -62,5 +68,14 @@ namespace GameBase.View.Poker.Huolong
         }
 
         private CharacterInfo info;
+
+        private static readonly Color[] indexColor = new Color[]{
+            Color.blue,
+            Color.red,
+            Color.green,
+            Color.magenta,
+            Color.cyan,
+            Color.yellow,
+        };
     }
 }

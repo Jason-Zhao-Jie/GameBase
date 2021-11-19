@@ -10,6 +10,7 @@ namespace GameBase.View.Poker
     public class WorldPokerManager : MonoBehaviour
     {
         public CardsZone MyPokerCards;
+        public CardsZone CenterPokerCards;
         public CardsZone[] ThrownPokerCards;
 
         // Start is called before the first frame update

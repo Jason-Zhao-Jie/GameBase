@@ -198,6 +198,9 @@ namespace GameBase.View.Poker.Huolong
 
         public void OnPlayerCampNumSelected()
         {
+            dropPlayerCampNum.options.RemoveAt(5);  // 去掉9人模式
+            dropPlayerCampNum.options.RemoveAt(4);  // 去掉8人模式
+            dropPlayerCampNum.options.RemoveAt(3);  // 去掉8人模式
             switch (dropPlayerCampNum.value)
             {
                 case 0:     // 4人2队

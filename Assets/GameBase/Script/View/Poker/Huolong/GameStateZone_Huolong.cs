@@ -8,6 +8,7 @@ namespace GameBase.View.Poker.Huolong
         public Text txtMatchIndex;
         public Text txtMainColorTitle;
         public Image mainColor;
+        public Text txtMainCampLevel;
         public Text txtCardsNum;
         public Text txtState;
 
@@ -21,6 +22,11 @@ namespace GameBase.View.Poker.Huolong
         public void SetMainColor(Common.Core.Poker.CardColor color)
         {
             mainColor.sprite = colorSprites[(int)color];
+        }
+
+        public void SetMainPoint(int level)
+        {
+            txtMainCampLevel.text = string.Format("×¯¼ÒµÈ¼¶: {0}", level);
         }
 
         public void SetCardsNum(int cardsNum)

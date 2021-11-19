@@ -6,20 +6,72 @@ namespace GameBase.View.Poker
 {
     public class CardsZone : MonoBehaviour
     {
+        private const float POKER_SPACE = 0.3f;
+
         public GameObject root;
         public GameObject cardPrefab;
         public int alignType;
+        public bool clickable;
 
         // Start is called before the first frame update
-        void Start()
+        void Awake()
         {
-
+            cardChange = false;
         }
 
         // Update is called once per frame
         void Update()
         {
-
+            if (cardChange)
+            {
+                var childCount = root.transform.childCount;
+                for (int i = 0; i < childCount; ++i)
+                {
+                    var n = root.transform.GetChild(i);
+                    var s = n.GetComponent<Sprite>();
+                    var c = n.GetComponent<Card>();
+                    if (c == null)
+                    {
+                        Common.PlatformInterface.Base.DebugError("检索牌时发现错误！");
+                    }
+                    switch (alignType)
+                    {
+                        case 0: // todo 自己的手牌,需要处理换行
+                            n.transform.localPosition = new Vector3(-s.rect.width * (i * POKER_SPACE + 0.5f), s.rect.height / 2, 0);
+                            break;
+                        case 1:
+                            n.transform.localPosition = new Vector3(s.rect.width * (i * POKER_SPACE + 0.5f), -s.rect.height / 2, 0);
+                            break;
+                        case 2:
+                            n.transform.localPosition = new Vector3(s.rect.width * (i  - childCount / 2f - 0.5f) * POKER_SPACE, -s.rect.height / 2, 0);
+                            break;
+                        case 3:
+                            n.transform.localPosition = new Vector3(-s.rect.width * (i * POKER_SPACE + 0.5f), -s.rect.height / 2, 0);
+                            break;
+                        case 4:
+                            n.transform.localPosition = new Vector3(s.rect.width * (i * POKER_SPACE + 0.5f), 0, 0);
+                            break;
+                        case 5:
+                            n.transform.localPosition = new Vector3(s.rect.width * (i - childCount / 2f - 0.5f) * POKER_SPACE, 0, 0);
+                            break;
+                        case 6:
+                            n.transform.localPosition = new Vector3(-s.rect.width * (i * POKER_SPACE + 0.5f), 0, 0);
+                            break;
+                        case 7:
+                            n.transform.localPosition = new Vector3(s.rect.width * (i * POKER_SPACE + 0.5f), s.rect.height / 2, 0);
+                            break;
+                        case 8:
+                            n.transform.localPosition = new Vector3(s.rect.width * (i - childCount / 2f - 0.5f) * POKER_SPACE, s.rect.height / 2, 0);
+                            break;
+                        case 9:
+                            n.transform.localPosition = new Vector3(-s.rect.width * (i * POKER_SPACE + 0.5f), s.rect.height / 2, 0);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                cardChange = false;
+            }
         }
 
         public int[] CardList
@@ -111,7 +163,9 @@ namespace GameBase.View.Poker
                     var goCard = Instantiate(cardPrefab, root.transform);
                     var compCard = goCard.GetComponent<Card>();
                     compCard.SetCard(c, MainScene.Instance.GetCardSprite(c));
+                    compCard.enableClick = clickable;
                 }
+                SortCards();
             }
         }
 
@@ -129,6 +183,7 @@ namespace GameBase.View.Poker
                     c.transform.SetParent(null);
                 }
             }
+            SortCards();
         }
 
         public void DeleteCardByColorPoint(int card)
@@ -145,6 +200,7 @@ namespace GameBase.View.Poker
                     c.transform.SetParent(null);
                 }
             }
+            SortCards();
         }
 
         public void DeleteCardByColor(Common.Core.Poker.CardColor color)
@@ -161,6 +217,7 @@ namespace GameBase.View.Poker
                     c.transform.SetParent(null);
                 }
             }
+            SortCards();
         }
 
         public void DeleteAllCards()
@@ -174,6 +231,34 @@ namespace GameBase.View.Poker
                 }
                 c.transform.SetParent(null);
             }
+            SortCards();
         }
+
+        public void AddSortFunc(System.Comparison<int> sortFunc)
+        {
+            this.sortFunc = sortFunc;
+        }
+
+        private void SortCards()
+        {
+            var cards = CardList;
+            System.Array.Sort(cards, Comparer<int>.Create(sortFunc));
+            var lastSelected = SelectedCards;
+            SelectedCards = null;
+            for (int i = 0; i < root.transform.childCount; ++i)
+            {
+                var c = root.transform.GetChild(i).GetComponent<Card>();
+                if (c == null)
+                {
+                    Common.PlatformInterface.Base.DebugError("检索牌时发现错误！");
+                }
+                c.SetCard(cards[i], MainScene.Instance.GetCardSprite(cards[i]));
+            }
+            SelectedCards = lastSelected;
+            cardChange = true;
+        }
+
+        private bool cardChange = false;
+        private System.Comparison<int> sortFunc = null;
     }
 }
