@@ -154,7 +154,7 @@ namespace GameBase.Present.Poker.Huolong
         {
         }
 
-        public void OnPlayerInfoChanged(int report, Common.Core.CharacterInfo oldInfo, Common.Core.CharacterInfo newInfo)
+        public void OnPlayerInfoChanged(int index, Common.Core.CharacterInfo newInfo)
         {
         }
 

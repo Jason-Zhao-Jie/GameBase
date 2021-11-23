@@ -36,6 +36,7 @@ namespace GameBase.Common.Model.Poker.Huolong
         public bool IsShowMainPoint { get; }
         public int MainCardsCount { get; }
         public int ThrowNeedNum { get; }
+        public int CurrentHandCardsNum { get; }
 
         #endregion 回合状态
 

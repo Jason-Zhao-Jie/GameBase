@@ -151,8 +151,16 @@ namespace GameBase.Present.Poker.Huolong
                                 playerItem.OnGameAborted();
                                 break;
                             case GameNoticeEvent.PlayerInfoChanged:
-                                playerItem.OnPlayerInfoChanged((msg.data[0] as int[])[0], msg.data[1] as CharacterInfo, msg.data[0] as CharacterInfo);
-                                break;
+                                {
+                                    var index = (msg.data[0] as int[])[0];
+                                    var info = msg.data[1] as CharacterInfo;
+                                    if (index == PlayerIndex)
+                                    {
+                                        PlayerInfo = info;
+                                    }
+                                    playerItem.OnPlayerInfoChanged(index, info);
+                                    break;
+                                }
                         }
                     }
                     else

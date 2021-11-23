@@ -169,8 +169,9 @@ namespace GameBase.View.Poker
             }
         }
 
-        public void DeleteCard(int card)
+        public void DeleteCards(params int[] cards)
         {
+            var delList = new List<int>(cards);
             for (int i = 0; i < root.transform.childCount; ++i)
             {
                 var c = root.transform.GetChild(i).GetComponent<Card>();
@@ -178,7 +179,7 @@ namespace GameBase.View.Poker
                 {
                     Common.PlatformInterface.Base.DebugError("¼ìË÷ÅÆÊ±·¢ÏÖ´íÎó£¡");
                 }
-                if (c.id != card)
+                if (delList.Contains(c.id))
                 {
                     c.transform.SetParent(null);
                 }

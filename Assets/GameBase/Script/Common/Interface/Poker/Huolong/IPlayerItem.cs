@@ -19,7 +19,7 @@ namespace GameBase.Common.Interface.Poker.Huolong
         public void OnMatchOver(Core.Poker.Huolong.MatchReport report);
         public void OnGameOver(Core.Poker.Huolong.GameReport report);
         public void OnGameAborted();
-        public void OnPlayerInfoChanged(int report, CharacterInfo oldInfo, CharacterInfo newInfo);
+        public void OnPlayerInfoChanged(int index, CharacterInfo newInfo);
         public void OnResponse(Core.Poker.Huolong.GameOperationEvent _event, Core.Poker.Huolong.GameOperationResponse response);
     }
 }

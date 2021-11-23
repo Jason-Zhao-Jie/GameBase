@@ -37,6 +37,7 @@ namespace GameBase.Common.Model.Poker.Huolong
         public int ShowedPlayer { get; private set; } = 0;
         public int MainCardsCount => mainCardLayout.Count;
         public int ThrowNeedNum => roundCardLayout[LeadPlayer].Count;
+        public int CurrentHandCardsNum => playerCardLayout[LeadPlayer].Count;
 
         #endregion »ØºÏ×´Ì¬
 

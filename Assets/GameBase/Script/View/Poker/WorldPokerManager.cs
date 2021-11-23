@@ -56,14 +56,24 @@ namespace GameBase.View.Poker
             }
         }
 
-        public void AddMyCards(params int[] cards)
+        public int[] GetAllMyCards()
         {
-            MyPokerCards.AddCard(cards);
+            return MyPokerCards.CardList;
         }
 
         public void SetSelectMyCards(params int[] cards)
         {
             MyPokerCards.SelectedCards = cards;
+        }
+
+        public int[] GetSelectMyCards()
+        {
+            return MyPokerCards.SelectedCards;
+        }
+
+        public void AddMyCards(params int[] cards)
+        {
+            MyPokerCards.AddCard(cards);
         }
 
         public void AddCenterCards(params int[] cards)
@@ -80,6 +90,21 @@ namespace GameBase.View.Poker
         {
             ThrownPokerCards[headIndexes[playerNum][playerIndex]].AddCard(cards);
             ThrownPokerCards[headIndexes[playerNum][playerIndex]].AddCard(addOnCards);
+        }
+
+        public void RemoveMyCards(params int[] cards)
+        {
+            MyPokerCards.DeleteCards(cards);
+        }
+
+        public void RemoveCenterCards(params int[] cards)
+        {
+            CenterPokerCards.DeleteCards(cards);
+        }
+
+        public void RemoveThrownCards(int playerIndex, params int[] cards)
+        {
+            ThrownPokerCards[headIndexes[playerNum][playerIndex]].DeleteCards(cards);
         }
 
         public void ClearThrownCards(int playerIndex)

@@ -58,7 +58,7 @@ namespace GameBase.View.Utility {
                 oldInfo.gender = (Common.Core.Gender)dropGender.value;
                 oldInfo.age = System.Convert.ToInt32(inputAge.text);
                 oldInfo.stateWords = inputStateWords.text;
-                Present.GameMain.Instance.Notify(Common.Core.SystemEventType.OnMyInfoChanged, oldInfo);
+                Present.GameMain.Instance.Notify(Common.Core.SystemEventType.OnPlayerInfoChanged, oldInfo);
             }
             Close();
         }

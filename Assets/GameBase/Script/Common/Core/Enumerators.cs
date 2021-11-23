@@ -3,7 +3,6 @@ namespace GameBase.Common.Core
 {
     public enum SystemEventType : int
     {
-        OnMyInfoChanged,
         OnPlayerInfoChanged,
         OnSystemSettingChanged,
         OnPlayerEnterGame,

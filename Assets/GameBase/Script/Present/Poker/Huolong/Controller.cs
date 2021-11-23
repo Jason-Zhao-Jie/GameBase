@@ -24,6 +24,7 @@ namespace GameBase.Present.Poker.Huolong
             playerFlags = new List<bool>();
             waitingResponse = false;
             token = new System.Threading.CancellationTokenSource();
+            GameMain.Instance.Listen(SystemEventType.OnPlayerInfoChanged, OnPlayerInfoChanged);
         }
 
         public CharacterInfo[] GetAllPlayersInfo()
@@ -188,6 +189,30 @@ namespace GameBase.Present.Poker.Huolong
             }
 
             return 0;
+        }
+
+        private void OnPlayerInfoChanged(object[] data)
+        {
+            var info = (CharacterInfo)data[0];
+            int index = -1;
+            for (int i = 0; i < model.Setting.playerNum; ++i)
+            {
+                if (players[i].PlayerInfo != null && players[i].PlayerInfo.id == info.id)
+                {
+                    index = i;
+                }
+            }
+            if (index >= 0)
+            {
+                players[index].Notice<object>(GameNoticeEvent.PlayerInfoChanged, new int[] { index }, info);
+                for (int i = 0; i < model.Setting.playerNum; ++i)
+                {
+                    if (i != index)
+                    {
+                        players[i].Notice<object>(GameNoticeEvent.PlayerInfoChanged, new int[] { index }, info);
+                    }
+                }
+            }
         }
 
         private void ResetFlags()

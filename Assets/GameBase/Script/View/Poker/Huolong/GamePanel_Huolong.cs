@@ -109,7 +109,7 @@ namespace GameBase.View.Poker.Huolong
         public void OnGetOneCard(int card)
         {
             PokerWorld.AddMyCards(card);
-            var (showAbleCards, showAbleColor) = vector.CheckShowAble(new CardLayout(PokerWorld.MyPokerCards.CardList));
+            var (showAbleCards, showAbleColor) = vector.CheckShowAble(new CardLayout(PokerWorld.GetAllMyCards()));
             if (showAbleCards != null && showAbleColor != CardColor.Unknown)
             {
                 tipZone.ShowTip("", ("抢庄", () =>
@@ -123,6 +123,7 @@ namespace GameBase.View.Poker.Huolong
             {
                 tipZone.HideTip();
             }
+            UpdateMyState();
         }
 
         public void OnPlayerShow(int player, int[] cards)
@@ -152,6 +153,7 @@ namespace GameBase.View.Poker.Huolong
         public void OnGetAllCards(int[] cards)
         {
             PokerWorld.AddMyCards(cards);
+            UpdateMyState();
         }
 
         public void OnAskForLastCards(int[] mainPlayerLastCards)
@@ -161,56 +163,136 @@ namespace GameBase.View.Poker.Huolong
             {
                 PokerWorld.AddMyCards(mainPlayerLastCards);
                 PokerWorld.SetSelectMyCards(mainPlayerLastCards);
-                // todo 询问用户埋底
+                tipZone.ShowTip("您是庄家, 请埋底", ("埋底", () =>
+                {
+                    var cards = PokerWorld.GetSelectMyCards();
+                    if (cards.Length != setting.lastCardsNum)
+                    {
+                        MainScene.Instance.ShowTips(string.Format("埋底数量错误，必须是{0}张底牌，请检查！", setting.lastCardsNum));
+                        return false;
+                    }
+                    else
+                    {
+                        vector.Operate(GameOperationEvent.LastCardsThrow, cards);
+                        return true;
+                    }
+                }
+                ));
             }
             else
             {
-                // todo 询问用户摘星
+                tipZone.ShowTip("庄家正在埋底，您可以选择摘星", ("摘星", () =>
+                {
+                    var cards = PokerWorld.GetSelectMyCards();
+                    if (cards.Length <= 0)
+                    {
+                        MainScene.Instance.ShowTips("请选择要摘星的王牌！");
+                        return false;
+                    }
+                    else
+                    {
+                        bool notJoker = false;
+                        bool onlyJoker2 = true;
+                        foreach (var c in cards)
+                        {
+                            if(Common.Core.Poker.Helper.GetColor(c)!= CardColor.Joker)
+                            {
+                                notJoker = true;
+                                break;
+                            }
+                            else if(Common.Core.Poker.Helper.GetPoint(c) == 1)
+                            {
+                                onlyJoker2 = false;
+                            }
+                        }
+                        if (notJoker)
+                        {
+                            MainScene.Instance.ShowTips("摘星必须选择王牌！");
+                            return false;
+                        }
+                        else if (onlyJoker2)
+                        {
+                            MainScene.Instance.ShowTips("摘星必须包含至少1张大王牌！");
+                            return false;
+                        }
+                        else
+                        {
+                            vector.Operate(GameOperationEvent.LastCardsThrow, cards);
+                            return true;
+                        }
+                    }
+                }
+                ), ("取消", ()=> {
+                    vector.Operate(GameOperationEvent.LastCardsThrow, new int[0]);
+                    return false;
+                }
+                ));
             }
+            UpdateMyState();
         }
 
         public void OnLastCardsOver(LastCardsReport report)
         {
+            PokerWorld.RemoveMyCards(report.pain[PlayerIndex]);
+            PokerWorld.AddMyCards(report.gain[PlayerIndex]);
+            PokerWorld.SetSelectMyCards(report.gain[PlayerIndex]);
+            PokerWorld.ClearCards(WorldPokerManager.CardType.CenterCards);
+            PokerWorld.AddCenterCards(report.lastCards);
+            for(int i = 0; i < setting.playerNum; ++i)
+            {
+                PokerWorld.AddThrownCards(GetPlayerRelativeIndex(i), report.pain[i], report.gain[i]);
+            }
+            tipZone.ShowTip("这是庄家埋底和其他人摘星的结果，请确认！", ("确认", () =>
+            {
+                vector.Response(GameNoticeResponse.PainLastCards_Confirm);
+                return true;
+            }
+            ));
+            UpdateMyState();
         }
 
         public void OnAskForThrow(int[] leaderCards)
         {
-
+            // todo 提示出牌,检查选择的牌型
         }
 
         public void OnPlayerThrew(int player, int[] threw)
         {
-
+            PokerWorld.AddThrownCards(GetPlayerRelativeIndex(player), threw);
+            UpdateMyState();
         }
 
         public void OnMatchAborted()
         {
-
+            // todo 弹出单局终止重来
         }
 
         public void OnGameAborted()
         {
-
+            // todo 弹出游戏中止
         }
 
         public void OnRoundOver(RoundReport report)
         {
-
+            // todo 处理回合结果，更新界面显示
         }
 
         public void OnMatchOver(MatchReport report)
         {
-
+            // todo 弹出单局结算
         }
 
         public void OnGameOver(GameReport report)
         {
-
+            // todo 弹出游戏结算
         }
 
-        public void OnPlayerInfoChanged(int report, Common.Core.CharacterInfo oldInfo, Common.Core.CharacterInfo newInfo)
+        public void OnPlayerInfoChanged(int index, Common.Core.CharacterInfo newInfo)
         {
-
+            int relativeIndex = GetPlayerRelativeIndex(index);
+            int headIndex = headIndexes[setting.playerNum][relativeIndex];
+            var head = heads[headIndex];
+            head.Info = vector.GetPlayerInfo(index);
         }
 
         #endregion Interfaces
@@ -247,6 +329,13 @@ namespace GameBase.View.Poker.Huolong
                 absolutlyIndex -= setting.playerNum;
             }
             return absolutlyIndex;
+        }
+
+        private void UpdateMyState()
+        {
+            var myCards = PokerWorld.GetAllMyCards();
+            myStateZone.SetMainNum(new CardLayout(myCards).GetMainCount(Model.MainColor, Model.MainPoint, Model.OftenMainPoint));
+            gameStateZone.SetCardsNum(myCards.Length);
         }
 
         private IPlayerVector_Item vector;

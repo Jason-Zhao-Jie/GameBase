@@ -490,7 +490,6 @@ namespace GameBase.View
 
             // ×Ô¼àÌýÊÂ¼þ
             Listen(SystemEventType.OnSystemSettingChanged, OnSystemSettingChanged);
-            Listen(SystemEventType.OnMyInfoChanged, OnPlayerInfoChanged);
             Listen(SystemEventType.OnPlayerInfoChanged, OnPlayerInfoChanged);
             Listen(SystemEventType.OnPlayerEnterGame, OnPlayerEnterGame);
             Listen(SystemEventType.OnPlayerExitGame, OnPlayerExitGame);
