@@ -395,10 +395,10 @@ namespace GameBase.View.Poker.Huolong
         {
             var strstr = new System.Text.StringBuilder();
             bool increaseJoker = false;
-            if ((54 * gameSetting.groupNum - gameSetting.lastCardsNum) % gameSetting.playerNum != 0)
+            if (gameSetting.InCreaseJokers())
             {
                 increaseJoker = true;
-                strstr.Append("去掉:1大王1小王, ");   // todo 需要追加实装这个去掉大小王牌的功能
+                strstr.Append("去掉:1大王1小王, ");
             }
             int totalMain = gameSetting.groupNum * (18 + (gameSetting.isConstantMain ? 3 : 0)) - (increaseJoker ? 2 : 0);
             strstr.Append("初始牌数: ");
@@ -681,7 +681,7 @@ namespace GameBase.View.Poker.Huolong
             ZeroScore,
             BaseStar,
             Joker1,
-            Joker2, // todo 检查结算逻辑有没有排除无大王的单小王等级, 应该是有
+            Joker2,
         }
 
         public enum DowngradeWayType : int

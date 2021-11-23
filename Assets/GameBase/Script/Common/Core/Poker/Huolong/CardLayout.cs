@@ -4,6 +4,10 @@ namespace GameBase.Common.Core.Poker.Huolong
 {
     public class CardLayout : Poker.CardLayout
     {
+        public CardLayout() : base() { }
+
+        public CardLayout(int[] cards) : base(cards) { }
+
         public int GetMainCount(CardColor mainColor, int mainPoint, int oftenMainPoint)
         {
             int ret = 0;

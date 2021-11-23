@@ -14,13 +14,13 @@ namespace GameBase.View.Poker
         public bool clickable;
 
         // Start is called before the first frame update
-        void Awake()
+        protected void Awake()
         {
             cardChange = false;
         }
 
         // Update is called once per frame
-        void Update()
+        protected void Update()
         {
             if (cardChange)
             {

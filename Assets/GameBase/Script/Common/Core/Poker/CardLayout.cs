@@ -15,6 +15,12 @@ namespace GameBase.Common.Core.Poker
             Current = 0;
         }
 
+        public CardLayout(int[] cards)
+        {
+            this.cards = new List<int>(cards);
+            Current = 0;
+        }
+
         public int Count
         {
             get

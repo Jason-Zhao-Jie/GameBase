@@ -82,6 +82,12 @@ namespace GameBase.Common.Model.Poker.Huolong
             }
             mainCardLayout = new CardLayout();
             mainCardLayout.Init(settings.groupNum);
+            if (settings.InCreaseJokers())
+            {
+                // 去掉大小王
+                mainCardLayout.Remove(Core.Poker.Helper.GetCardId(CardColor.Joker, 1, settings.groupNum - 1));
+                mainCardLayout.Remove(Core.Poker.Helper.GetCardId(CardColor.Joker, 2, settings.groupNum - 1));
+            }
             lastCardLayout = new CardLayout();
             roundCardLayout = new CardLayout[s.playerNum];
             playerCardLayout = new CardLayout[s.playerNum];

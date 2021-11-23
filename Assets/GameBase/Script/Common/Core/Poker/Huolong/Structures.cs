@@ -34,6 +34,15 @@ namespace GameBase.Common.Core.Poker.Huolong
         public bool recordThisMatch;
         public int firstRoundGiveCardsDelay;
         public int aroundOverDelay;
+
+        /// <summary>
+        /// 判断是否需要去掉大小王各一张
+        /// </summary>
+        /// <returns></returns>
+        public bool InCreaseJokers()
+        {
+            return (54 * groupNum - lastCardsNum) % playerNum != 0;
+        }
     }
 
     [System.Serializable]

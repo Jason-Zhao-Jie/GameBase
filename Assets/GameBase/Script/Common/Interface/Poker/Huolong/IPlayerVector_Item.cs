@@ -6,5 +6,6 @@ namespace GameBase.Common.Interface.Poker.Huolong
         public Model.Poker.Huolong.IModel Model { get; }
         public bool Response(Core.Poker.Huolong.GameNoticeResponse response);
         public bool Operate<T>(Core.Poker.Huolong.GameOperationEvent _event, T data) where T : class;
+        public (int[] cards, Core.Poker.CardColor color) CheckShowAble(Core.Poker.Huolong.CardLayout myCards);
     }
 }

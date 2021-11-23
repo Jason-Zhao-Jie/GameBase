@@ -165,6 +165,46 @@ namespace GameBase.Present.Poker.Huolong
             return 0;
         }
 
+        public (int[] cards, CardColor color) CheckShowAble(Common.Core.Poker.Huolong.CardLayout myCards)
+        {
+            if (Model.AllowShow)
+            {
+                var min = Model.MinShowCardsNum;
+                if (Model.IsShowMainPoint)
+                {
+                    var spades = myCards.GetColorPointCards(Common.Core.Poker.Helper.GetCardId(CardColor.Spades, Model.MainPoint));
+                    var heart = myCards.GetColorPointCards(Common.Core.Poker.Helper.GetCardId(CardColor.Heart, Model.MainPoint));
+                    var cube = myCards.GetColorPointCards(Common.Core.Poker.Helper.GetCardId(CardColor.Cube, Model.MainPoint));
+                    var diamond = myCards.GetColorPointCards(Common.Core.Poker.Helper.GetCardId(CardColor.Diamond, Model.MainPoint));
+                    if (spades.Length >= min && spades.Length >= heart.Length && spades.Length >= cube.Length && spades.Length >= diamond.Length)
+                    {
+                        return (spades, CardColor.Spades);
+                    }
+                    else if (heart.Length >= min && heart.Length >= spades.Length && heart.Length >= cube.Length && heart.Length >= diamond.Length)
+                    {
+                        return (heart, CardColor.Heart);
+                    }
+                    else if (cube.Length >= min && cube.Length >= spades.Length && cube.Length >= heart.Length && cube.Length >= diamond.Length)
+                    {
+                        return (cube, CardColor.Cube);
+                    }
+                    else if (diamond.Length >= min && diamond.Length >= spades.Length && diamond.Length >= heart.Length && diamond.Length >= cube.Length)
+                    {
+                        return (diamond, CardColor.Diamond);
+                    }
+                }
+                else
+                {
+                    var joker = myCards.GetColorPointCards(Common.Core.Poker.Helper.Joker1);
+                    if (joker.Length >= min)
+                    {
+                        return (joker, CardColor.Joker);
+                    }
+                }
+            }
+            return (null, CardColor.Unknown);
+        }
+
         private IController controller = null;
         private IPlayerItem<IPlayerVector_Item> playerItem = null;
         private System.Threading.CancellationTokenSource token;

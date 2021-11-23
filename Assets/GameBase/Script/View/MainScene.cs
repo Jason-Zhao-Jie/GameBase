@@ -385,6 +385,7 @@ namespace GameBase.View
                                         }
                                         else
                                         {
+                                            Common.PlatformInterface.Base.DebugInfo("游戏成功开始");
                                             // 开始游戏成功, 这里理论上不需要什么处理
                                         }
                                     }

@@ -14,9 +14,18 @@ namespace GameBase.View.Poker.Huolong
 
         public Sprite[] colorSprites;
 
+        public void InitNewGame(int firstLevel)
+        {
+            SetMatchIndex(0);
+            SetMainColor(Common.Core.Poker.CardColor.Unknown);
+            SetMainPoint(firstLevel);
+            SetState("游戏准备中");
+        }
+
         public void SetMatchIndex(int index)
         {
             txtMatchIndex.text = string.Format("第{0}局", index);
+            txtCardsNum.gameObject.SetActive(false);
         }
 
         public void SetMainColor(Common.Core.Poker.CardColor color)
@@ -26,11 +35,12 @@ namespace GameBase.View.Poker.Huolong
 
         public void SetMainPoint(int level)
         {
-            txtMainCampLevel.text = string.Format("庄家等级: {0}", level);
+            txtMainCampLevel.text = string.Format("庄家等级: {0}", Common.Core.Poker.Helper.PointToString(level));
         }
 
         public void SetCardsNum(int cardsNum)
         {
+            txtCardsNum.gameObject.SetActive(true);
             txtCardsNum.text = string.Format("剩余{0}张牌", cardsNum);
         }
 
