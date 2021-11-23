@@ -20,12 +20,12 @@ namespace GameBase.View.Poker.Huolong
 
         public void OnClickPrevious()
         {
-            // todo
+            MainScene.Instance.ShowTips("查看上一手功能暂未实现");
         }
 
         public void OnClickLastCards()
         {
-            // todo
+            MainScene.Instance.ShowTips("查看底牌功能暂未实现");
         }
     }
 }

@@ -51,5 +51,6 @@ MonoBehaviour:
   mainMenuPanel: {fileID: 8880450107808349681, guid: d8915528f4161434da478184a1147b85, type: 3}
   gameSettingPanel_huolong: {fileID: 6523570327120733520, guid: 231bd3ec1179f6148b33c8b4b3262a8e, type: 3}
   gamePanel_huolong: {fileID: 339541146265795422, guid: 899994f5801c72a49b5f1f29632d756c, type: 3}
+  gameWorld_traditionalPoker: {fileID: 4329020757759584426, guid: ae3f5a414c6fceb4dbfd9df01f350b62, type: 3}
   poker_pokerCard: {fileID: 8173705441380394713, guid: b2aafdc269c14be47861e6fb6f4983d7, type: 3}
   poker_uiPokerCard: {fileID: 7681201544086999672, guid: 6121b01ac5936314288448bd4321f836, type: 3}

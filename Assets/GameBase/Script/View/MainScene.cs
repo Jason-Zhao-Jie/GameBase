@@ -325,12 +325,15 @@ namespace GameBase.View
             bool ok = false;
             var gameId = GetGameId(type, subType);
             var panel = gamePanelList[gameId];
+            var world = gameWorldList[gameId];
             if (panel != null)
             {
                 ok = true;
                 var bar = Instantiate(panel, uiPanelRoot);
                 var ret = bar.GetComponent<AGamePanel>();
                 currentGamePanel = ret;
+                var worldManager = Instantiate(world, worldRoot.transform);
+                currentGameWorldManager = worldManager;
                 var playerIds = new int[playerNum];
                 switch (type)
                 {
@@ -349,6 +352,7 @@ namespace GameBase.View
 
                                     // 本机 player
                                     var hostItem = ret.GetComponent<Poker.Huolong.GamePanel_Huolong>();
+                                    hostItem.PokerWorld = worldManager.GetComponent<Poker.WorldPokerManager>();
                                     var hostVec = new Present.Poker.Huolong.PlayerVector();
                                     hostVec.SetPlayerItem(hostItem);
                                     hostItem.SetVector(hostVec);
@@ -381,7 +385,7 @@ namespace GameBase.View
                                         }
                                         else
                                         {
-                                            // 开始游戏成功
+                                            // 开始游戏成功, 这里理论上不需要什么处理
                                         }
                                     }
                                     else
@@ -480,6 +484,8 @@ namespace GameBase.View
             prefabList.Add(typeof(Poker.Huolong.GameSettingPanel_Huolong), pc.gameSettingPanel_huolong);
 
             gamePanelList.Add(GetGameId(GameType.Poker, (int)Common.Core.Poker.GameSubType.Huolong), pc.gamePanel_huolong);
+
+            gameWorldList.Add(GetGameId(GameType.Poker, (int)Common.Core.Poker.GameSubType.Huolong), pc.gameWorld_traditionalPoker);
 
             // 自监听事件
             Listen(SystemEventType.OnSystemSettingChanged, OnSystemSettingChanged);
@@ -834,8 +840,10 @@ namespace GameBase.View
 
         private readonly Dictionary<System.Type, GameObject> prefabList = new Dictionary<System.Type, GameObject>();
         private readonly Dictionary<int, GameObject> gamePanelList = new Dictionary<int, GameObject>();
+        private readonly Dictionary<int, GameObject> gameWorldList = new Dictionary<int, GameObject>();
         private readonly Stack<APanel> panelStack = new Stack<APanel>();
         private AGamePanel currentGamePanel = null;
+        private GameObject currentGameWorldManager = null;
         private Common.Interface.IController currentGameController = null;
 
         private string currentPlayingMusic;

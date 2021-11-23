@@ -18,6 +18,8 @@ namespace GameBase.View.Component
 
         public GameObject gamePanel_huolong;
 
+        public GameObject gameWorld_traditionalPoker;
+
         public GameObject poker_pokerCard;
         public GameObject poker_uiPokerCard;
 

@@ -583,13 +583,13 @@ namespace GameBase.View.Poker.Huolong
         private Common.Core.Poker.Huolong.GameSetting gameSetting;
         private readonly Dictionary<HelpTipType, string> helpTips = new Dictionary<HelpTipType, string>() {
             {HelpTipType.NeedJokerLevel, "\u3000\u3000如果选择打王级，则在最终级顺利过关后，还需要打一级王级才能通关。\n\u3000\u3000打王级时，没有主花色，主牌只有王牌和常主牌。\n\u3000\u3000同门槛级一样，王级不可跨越，但不会降级。" },
-            {HelpTipType.ColorWay, "" },
-            {HelpTipType.ForceJokerLastCards, "" },
-            {HelpTipType.WinWay, "" },
-            {HelpTipType.UpgradeNum, "" },
-            {HelpTipType.ThresholdLevel, "" },
-            {HelpTipType.DowngradeWay, "" },
-        };   // todo 填充提示文字
+            {HelpTipType.ColorWay, "\u3000\u3000确定主花色的方法，（说明待补充）。" },
+            {HelpTipType.ForceJokerLastCards, "\u3000\u3000强制摘大王的条件，（说明待补充）。" },
+            {HelpTipType.WinWay, "\u3000\u3000获胜条件，（说明待补充）。" },
+            {HelpTipType.UpgradeNum, "\u3000\u3000升级数计算方式，（说明待补充）。" },
+            {HelpTipType.ThresholdLevel, "\u3000\u3000门槛级设置。\n\u3000\u3000门槛级只能通过坐庄升级，不能通过连升级或闲家跳级的方式跳过不打。\n\u3000\u3000除此以外，门槛级失败被抠底时，还可能降级。\n\u3000\u3000门槛级降级，将降至上一个门槛级；如果没有上一个门槛级，则降为初始级。" },
+            {HelpTipType.DowngradeWay, "门槛级失败降级条件，（说明待补充）。" },
+        };
 
         private readonly int[][] groupNumItemsOfPlayerCampNum = new int[][]
         {

@@ -16,6 +16,16 @@ namespace GameBase.View.Poker.Huolong
 
         #endregion Inspector Fields
 
+        #region Properties
+
+        public WorldPokerManager PokerWorld
+        {
+            get;
+            set;
+        }
+
+        #endregion Properties
+
         #region Intefaces
 
         public override int GameSubType => (int)Common.Core.Poker.GameSubType.Huolong;
