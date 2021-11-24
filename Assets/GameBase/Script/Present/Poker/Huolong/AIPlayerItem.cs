@@ -87,15 +87,6 @@ namespace GameBase.Present.Poker.Huolong
             vector.Response(GameNoticeResponse.PainLastCards_Confirm);
         }
 
-        public void OnPlayerThrew(int player, int[] threw)
-        {
-            if (player == PlayerIndex)
-            {
-                myCards.RemoveCards(threw);
-            }
-            roundCards[player].PushCard(threw);
-        }
-
         public void OnAskForThrow(int[] leaderCards)
         {
             if (leaderCards == null || leaderCards.Length == 0)
@@ -130,6 +121,15 @@ namespace GameBase.Present.Poker.Huolong
                 vector.Operate(GameOperationEvent.CardsThrew, threw);
             }
 
+        }
+
+        public void OnPlayerThrew(int player, int[] threw)
+        {
+            if (player == PlayerIndex)
+            {
+                myCards.RemoveCards(threw);
+            }
+            roundCards[player].PushCard(threw);
         }
 
         public void OnRoundOver(RoundReport report)

@@ -67,9 +67,9 @@ namespace GameBase.Common.Core.Poker
             }
         }
 
-        public static string ColorToString(int card)
+        public static string ColorToString(CardColor color)
         {
-            switch (GetColor(card))
+            switch (color)
             {
                 case CardColor.Spades:
                     return "ºÚÌÒ";
@@ -84,6 +84,11 @@ namespace GameBase.Common.Core.Poker
                 default:
                     return "Î´Öª»¨É«";
             }
+        }
+
+        public static string ColorToString(int card)
+        {
+            return ColorToString(GetColor(card));
         }
 
         public static string PointToString(int card)

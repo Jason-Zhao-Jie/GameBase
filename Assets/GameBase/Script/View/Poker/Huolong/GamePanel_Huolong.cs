@@ -2,6 +2,9 @@ using GameBase.Common.Interface.Poker.Huolong;
 using GameBase.Common.Core.Poker;
 using GameBase.Common.Core.Poker.Huolong;
 using CardLayout = GameBase.Common.Core.Poker.Huolong.CardLayout;
+using PokerHelper = GameBase.Common.Core.Poker.Helper;
+using HuolongHelper = GameBase.Common.Core.Poker.Huolong.Helper;
+using System.Threading.Tasks;
 
 namespace GameBase.View.Poker.Huolong
 {
@@ -19,11 +22,7 @@ namespace GameBase.View.Poker.Huolong
 
         #region Properties
 
-        public WorldPokerManager PokerWorld
-        {
-            get;
-            set;
-        }
+        public WorldPokerManager PokerWorld { get; set; }
 
         public Common.Model.Poker.Huolong.IModel Model => vector.Model;
 
@@ -81,6 +80,7 @@ namespace GameBase.View.Poker.Huolong
 
         public void OnMatchStart()
         {
+            myCards = new CardLayout();
             // 清理界面
             PokerWorld.ClearCards(WorldPokerManager.CardType.MyHandCard);
             // 更新界面
@@ -109,7 +109,11 @@ namespace GameBase.View.Poker.Huolong
         public void OnGetOneCard(int card)
         {
             PokerWorld.AddMyCards(card);
-            var (showAbleCards, showAbleColor) = vector.CheckShowAble(new CardLayout(PokerWorld.GetAllMyCards()));
+            myCards.PushCard(card);
+            myStateZone.gameObject.SetActive(true);
+            myStateZone.SetInGame(false);
+            myStateZone.SetMainNum(myCards.GetMainCount(Model.MainColor, Model.MainPoint, Model.OftenMainPoint));
+            var (showAbleCards, showAbleColor) = vector.CheckShowAble(myCards);
             if (showAbleCards != null && showAbleColor != CardColor.Unknown)
             {
                 tipZone.ShowTip("", ("抢庄", () =>
@@ -153,6 +157,9 @@ namespace GameBase.View.Poker.Huolong
         public void OnGetAllCards(int[] cards)
         {
             PokerWorld.AddMyCards(cards);
+            myCards.PushCard(cards);
+            myStateZone.gameObject.SetActive(true);
+            myStateZone.SetInGame(false);
             UpdateMyState();
         }
 
@@ -162,6 +169,7 @@ namespace GameBase.View.Poker.Huolong
             if(Model.MainPlayer == PlayerIndex)
             {
                 PokerWorld.AddMyCards(mainPlayerLastCards);
+                myCards.PushCard(mainPlayerLastCards);
                 PokerWorld.SetSelectMyCards(mainPlayerLastCards);
                 tipZone.ShowTip("您是庄家, 请埋底", ("埋底", () =>
                 {
@@ -177,11 +185,16 @@ namespace GameBase.View.Poker.Huolong
                         return true;
                     }
                 }
+                ), ("重置", () =>
+                {
+                    PokerWorld.SetSelectMyCards();
+                    return false;
+                }
                 ));
             }
             else
             {
-                tipZone.ShowTip("庄家正在埋底，您可以选择摘星", ("摘星", () =>
+                tipZone.ShowTip("", ("摘星", () =>
                 {
                     var cards = PokerWorld.GetSelectMyCards();
                     if (cards.Length <= 0)
@@ -195,12 +208,12 @@ namespace GameBase.View.Poker.Huolong
                         bool onlyJoker2 = true;
                         foreach (var c in cards)
                         {
-                            if(Common.Core.Poker.Helper.GetColor(c)!= CardColor.Joker)
+                            if(PokerHelper.GetColor(c)!= CardColor.Joker)
                             {
                                 notJoker = true;
                                 break;
                             }
-                            else if(Common.Core.Poker.Helper.GetPoint(c) == 1)
+                            else if(PokerHelper.GetPoint(c) == 1)
                             {
                                 onlyJoker2 = false;
                             }
@@ -222,7 +235,7 @@ namespace GameBase.View.Poker.Huolong
                         }
                     }
                 }
-                ), ("取消", ()=> {
+                ), ("不摘星", ()=> {
                     vector.Operate(GameOperationEvent.LastCardsThrow, new int[0]);
                     return false;
                 }
@@ -234,7 +247,9 @@ namespace GameBase.View.Poker.Huolong
         public void OnLastCardsOver(LastCardsReport report)
         {
             PokerWorld.RemoveMyCards(report.pain[PlayerIndex]);
+            myCards.RemoveCards(report.pain[PlayerIndex]);
             PokerWorld.AddMyCards(report.gain[PlayerIndex]);
+            myCards.PushCard(report.gain[PlayerIndex]);
             PokerWorld.SetSelectMyCards(report.gain[PlayerIndex]);
             PokerWorld.ClearCards(WorldPokerManager.CardType.CenterCards);
             PokerWorld.AddCenterCards(report.lastCards);
@@ -242,9 +257,12 @@ namespace GameBase.View.Poker.Huolong
             {
                 PokerWorld.AddThrownCards(GetPlayerRelativeIndex(i), report.pain[i], report.gain[i]);
             }
-            tipZone.ShowTip("这是庄家埋底和其他人摘星的结果，请确认！", ("确认", () =>
+            tipZone.ShowTip("这是埋底和摘星的结果，请确认！", ("确认", () =>
             {
+                PokerWorld.ClearCards(WorldPokerManager.CardType.CenterCards);
                 vector.Response(GameNoticeResponse.PainLastCards_Confirm);
+                gameStateZone.SetState("行牌中");
+                myStateZone.SetInGame(true);
                 return true;
             }
             ));
@@ -253,28 +271,161 @@ namespace GameBase.View.Poker.Huolong
 
         public void OnAskForThrow(int[] leaderCards)
         {
-            // todo 提示出牌,检查选择的牌型
+            gameStateZone.SetState("请您出牌");
+            if (leaderCards == null || leaderCards.Length == 0)
+            {
+                tipZone.ShowTip("", ("出牌", () =>
+                {
+                    var selected = PokerWorld.GetSelectMyCards();
+                    if (selected == null)
+                    {
+                        MainScene.Instance.ShowTips("请选择要打出的牌!");
+                        return false;
+                    }
+                    var card = PokerHelper.GetColorPoint(selected[0]);
+                    foreach(var c in selected)
+                    {
+                        if (PokerHelper.GetColorPoint(c) != card)
+                        {
+                            MainScene.Instance.ShowTips("首家只能出单牌或相同的多张牌！");
+                            return false;
+                        }
+                    }
+                    vector.Operate(GameOperationEvent.CardsThrew, selected);
+                    return true;
+                }
+                ), ("重置", () =>
+                {
+                    PokerWorld.SetSelectMyCards();
+                    return false;
+                }
+                ));
+            }
+            else
+            {
+                var num = leaderCards.Length;
+                var color = PokerHelper.GetColor(leaderCards[0]);
+                var isMain = HuolongHelper.GetIsMain(leaderCards[0], Model.MainColor, Model.MainPoint, Model.OftenMainPoint);
+                var suitCards = myCards.GetSuitableCards(leaderCards, Model.MainColor, Model.MainPoint, Model.OftenMainPoint);
+                tipZone.ShowTip("", ("出牌", () =>
+                {
+                    var selected = PokerWorld.GetSelectMyCards();
+                    if (selected == null || selected.Length != num)
+                    {
+                        MainScene.Instance.ShowTips(string.Format("必须出{0}张牌，请检查！", num));
+                        return false;
+                    }
+                    int numColor = 0;
+                    foreach (var c in selected)
+                    {
+                        if (HuolongHelper.GetIsMain(c, Model.MainColor, Model.MainPoint, Model.OftenMainPoint))
+                        {
+                            if (isMain)
+                            {
+                                numColor++;
+                            }
+                        }
+                        else
+                        {
+                            if (!isMain && PokerHelper.GetColor(c) == color)
+                            {
+                                numColor++;
+                            }
+                        }
+                    }
+                    if (suitCards.Length > numColor && num > numColor)
+                    {
+                        if (isMain)
+                        {
+                            if (suitCards.Length >= num)
+                            {
+                                MainScene.Instance.ShowTips("你必须出主牌");
+                                return false;
+                            }
+                            else
+                            {
+                                MainScene.Instance.ShowTips("你必须先打出所有的主牌!");
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            if (suitCards.Length >= num)
+                            {
+                                MainScene.Instance.ShowTips(string.Format("你必须出{0}", PokerHelper.ColorToString(color)));
+                                return false;
+                            }
+                            else
+                            {
+                                MainScene.Instance.ShowTips(string.Format("你必须先打出所有的{0}", PokerHelper.ColorToString(color)));
+                                return false;
+                            }
+                        }
+                    }
+                    vector.Operate(GameOperationEvent.CardsThrew, selected);
+                    return true;
+                }
+                ), ("重置", () =>
+                 {
+                     PokerWorld.SetSelectMyCards();
+                     return false;
+                 }
+                ));
+            }
         }
 
         public void OnPlayerThrew(int player, int[] threw)
         {
+            gameStateZone.SetState("行牌中");
             PokerWorld.AddThrownCards(GetPlayerRelativeIndex(player), threw);
+            if(player == PlayerIndex)
+            {
+                PokerWorld.RemoveMyCards(threw);
+                myCards.RemoveCards(threw);
+            }
             UpdateMyState();
         }
 
         public void OnMatchAborted()
         {
-            // todo 弹出单局终止重来
+            MainScene.Instance.ShowMessageBox("无人亮牌，本局重新发牌！", "确定", () =>
+            {
+                vector.Response(GameNoticeResponse.MatchAborted_NobodyShowed_Confirm);
+                return true;
+            });
         }
 
         public void OnGameAborted()
         {
-            // todo 弹出游戏中止
+            gameStateZone.SetState("游戏被中止");
+            MainScene.Instance.ShowMessageBox("游戏被中止！", "确定", () =>
+            {
+                MainScene.Instance.ShowTips("退回主界面功能正在开发中");
+                return false;
+            });
         }
 
         public void OnRoundOver(RoundReport report)
         {
-            // todo 处理回合结果，更新界面显示
+            gameStateZone.SetState("回合结算");
+            tipZone.HideTip();
+            int playerNum = setting.playerNum;
+            int campNum = setting.campNum;
+            for (int i = 0; i < playerNum; ++i)
+            {
+                int absolutlyIndex = GetPlayerAbsolutlyIndex(i);
+                int campIndex = absolutlyIndex % campNum;
+                int headIndex = headIndexes[playerNum][i];
+                var head = heads[headIndex];
+                head.SetScore(Model.GetCampScore(campIndex));
+            }
+            UpdateMyState();
+            Task.Delay(setting.aroundOverDelay).ContinueWith((Task task) =>
+            {
+                // 清理
+                PokerWorld.ClearCards(WorldPokerManager.CardType.ThrownCards);
+                vector.Response(GameNoticeResponse.Round_Confirm);
+            });
         }
 
         public void OnMatchOver(MatchReport report)
@@ -333,13 +484,14 @@ namespace GameBase.View.Poker.Huolong
 
         private void UpdateMyState()
         {
-            var myCards = PokerWorld.GetAllMyCards();
-            myStateZone.SetMainNum(new CardLayout(myCards).GetMainCount(Model.MainColor, Model.MainPoint, Model.OftenMainPoint));
-            gameStateZone.SetCardsNum(myCards.Length);
+            myStateZone.SetMainNum(myCards.GetMainCount(Model.MainColor, Model.MainPoint, Model.OftenMainPoint));
+            gameStateZone.SetCardsNum(myCards.Count);
+            myStateZone.SetMainNum(myCards.GetMainCount(Model.MainColor, Model.MainPoint, Model.OftenMainPoint));
         }
 
         private IPlayerVector_Item vector;
         private GameSetting setting;
+        private CardLayout myCards;
 
         private static readonly int[][] headIndexes = new int[][]
         {
