@@ -85,7 +85,7 @@
       "downgradeByUnMainConstantMain": false,
       "recordThisMatch": false,
       "firstRoundGiveCardsDelay": 150,
-      "aroundOverDelay": 2000
+      "aroundOverDelay": 500
     },
     {
       "playerNum": 6,

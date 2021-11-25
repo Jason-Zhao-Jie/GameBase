@@ -243,7 +243,10 @@ namespace GameBase.View.Poker
         private void SortCards()
         {
             var cards = CardList;
-            System.Array.Sort(cards, Comparer<int>.Create(sortFunc));
+            if (cards != null && cards.Length > 1)
+            {
+                System.Array.Sort(cards, Comparer<int>.Create(sortFunc));
+            }
             var lastSelected = SelectedCards;
             SelectedCards = null;
             for (int i = 0; i < root.transform.childCount; ++i)
