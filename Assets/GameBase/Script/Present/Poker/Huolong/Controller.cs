@@ -136,7 +136,7 @@ namespace GameBase.Present.Poker.Huolong
             }
             while (!token.IsCancellationRequested)
             {
-                await Task.Delay(GameSetting.aroundOverDelay);
+                await Task.Delay(1);
                 if (messages.Count > 0)
                 {
                     var msg = messages.Dequeue();

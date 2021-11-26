@@ -102,6 +102,7 @@ namespace GameBase.View.Poker.Huolong
                 head.SetScore(Model.GetCampScore(campIndex));
             }
             PokerWorld.Init(playerNum);
+            UpdatePokerWorldSortFunc();
             // 告知 Controller 已准备就绪
             vector.Response(GameNoticeResponse.StartMatch_Ready);
         }
@@ -140,6 +141,7 @@ namespace GameBase.View.Poker.Huolong
             head.IsMain = Model.MainPlayer == player;
             gameStateZone.SetMainColor(Model.MainColor);
             gameStateZone.SetMainPoint(Model.MainPoint);
+            UpdatePokerWorldSortFunc();
         }
 
         public void OnPlayerShowResult(int player, int[] jokers, int target)
@@ -152,6 +154,7 @@ namespace GameBase.View.Poker.Huolong
             head.IsMain = Model.MainPlayer == player;
             gameStateZone.SetMainColor(Model.MainColor);
             gameStateZone.SetMainPoint(Model.MainPoint);
+            UpdatePokerWorldSortFunc();
         }
 
         public void OnGetAllCards(int[] cards)
@@ -487,6 +490,22 @@ namespace GameBase.View.Poker.Huolong
             myStateZone.SetMainNum(myCards.GetMainCount(Model.MainColor, Model.MainPoint, Model.OftenMainPoint));
             gameStateZone.SetCardsNum(myCards.Count);
             myStateZone.SetMainNum(myCards.GetMainCount(Model.MainColor, Model.MainPoint, Model.OftenMainPoint));
+        }
+
+        private void UpdatePokerWorldSortFunc()
+        {
+            PokerWorld.SetCardsSortFunc(WorldPokerManager.CardType.MyHandCard, (int a, int b) =>
+            {
+                return HuolongHelper.CompareAsHandCard(a, b, Model.MainColor, Model.MainPoint, Model.OftenMainPoint);
+            });
+            PokerWorld.SetCardsSortFunc(WorldPokerManager.CardType.CenterCards, (int a, int b) =>
+            {
+                return HuolongHelper.CompareAsLastCards(a, b, Model.MainColor, Model.MainPoint, Model.OftenMainPoint);
+            });
+            PokerWorld.SetCardsSortFunc(WorldPokerManager.CardType.MyHandCard, (int a, int b) =>
+            {
+                return HuolongHelper.CompareAsHandCard(a, b, Model.MainColor, Model.MainPoint, Model.OftenMainPoint);
+            });
         }
 
         private IPlayerVector_Item vector;

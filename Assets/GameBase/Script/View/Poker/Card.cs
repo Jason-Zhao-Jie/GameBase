@@ -18,6 +18,21 @@ namespace GameBase.View.Poker
 
         public bool Clicked { get; private set; } = false;
 
+        public Rect CardRect
+        {
+            get
+            {
+                if(image != null)
+                {
+                    return image.rectTransform.rect;
+                }
+                else
+                {
+                    return sprite.sprite.rect;
+                }
+            }
+        }
+
         // Start is called before the first frame update
         void Start()
         {

@@ -28,8 +28,9 @@ namespace GameBase.View.Poker
                 for (int i = 0; i < childCount; ++i)
                 {
                     var n = root.transform.GetChild(i);
-                    var s = n.GetComponent<Sprite>();
                     var c = n.GetComponent<Card>();
+                    var width = c.CardRect.width;
+                    var height = c.CardRect.height;
                     if (c == null)
                     {
                         Common.PlatformInterface.Base.DebugError("检索牌时发现错误！");
@@ -37,34 +38,34 @@ namespace GameBase.View.Poker
                     switch (alignType)
                     {
                         case 0: // todo 自己的手牌,需要处理换行
-                            n.transform.localPosition = new Vector3(-s.rect.width * (i * POKER_SPACE + 0.5f), s.rect.height / 2, 0);
+                            n.transform.localPosition = new Vector3(-width * (i * POKER_SPACE + 0.5f), height / 2, 0.01f*i);
                             break;
                         case 1:
-                            n.transform.localPosition = new Vector3(s.rect.width * (i * POKER_SPACE + 0.5f), -s.rect.height / 2, 0);
+                            n.transform.localPosition = new Vector3(width * (i * POKER_SPACE + 0.5f), -height / 2, 0.01f * i);
                             break;
                         case 2:
-                            n.transform.localPosition = new Vector3(s.rect.width * (i  - childCount / 2f - 0.5f) * POKER_SPACE, -s.rect.height / 2, 0);
+                            n.transform.localPosition = new Vector3(width * (i  - childCount / 2f - 0.5f) * POKER_SPACE, -height / 2, 0.01f * i);
                             break;
                         case 3:
-                            n.transform.localPosition = new Vector3(-s.rect.width * (i * POKER_SPACE + 0.5f), -s.rect.height / 2, 0);
+                            n.transform.localPosition = new Vector3(-width * (i * POKER_SPACE + 0.5f), -height / 2, 0.01f * i);
                             break;
                         case 4:
-                            n.transform.localPosition = new Vector3(s.rect.width * (i * POKER_SPACE + 0.5f), 0, 0);
+                            n.transform.localPosition = new Vector3(width * (i * POKER_SPACE + 0.5f), 0, 0.01f * i);
                             break;
                         case 5:
-                            n.transform.localPosition = new Vector3(s.rect.width * (i - childCount / 2f - 0.5f) * POKER_SPACE, 0, 0);
+                            n.transform.localPosition = new Vector3(width * (i - childCount / 2f - 0.5f) * POKER_SPACE, 0, 0.01f * i);
                             break;
                         case 6:
-                            n.transform.localPosition = new Vector3(-s.rect.width * (i * POKER_SPACE + 0.5f), 0, 0);
+                            n.transform.localPosition = new Vector3(-width * (i * POKER_SPACE + 0.5f), 0, 0.01f * i);
                             break;
                         case 7:
-                            n.transform.localPosition = new Vector3(s.rect.width * (i * POKER_SPACE + 0.5f), s.rect.height / 2, 0);
+                            n.transform.localPosition = new Vector3(width * (i * POKER_SPACE + 0.5f), height / 2, 0.01f * i);
                             break;
                         case 8:
-                            n.transform.localPosition = new Vector3(s.rect.width * (i - childCount / 2f - 0.5f) * POKER_SPACE, s.rect.height / 2, 0);
+                            n.transform.localPosition = new Vector3(width * (i - childCount / 2f - 0.5f) * POKER_SPACE, height / 2, 0.01f * i);
                             break;
                         case 9:
-                            n.transform.localPosition = new Vector3(-s.rect.width * (i * POKER_SPACE + 0.5f), s.rect.height / 2, 0);
+                            n.transform.localPosition = new Vector3(-width * (i * POKER_SPACE + 0.5f), height / 2, 0.01f * i);
                             break;
                         default:
                             break;

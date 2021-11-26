@@ -33,7 +33,8 @@ namespace GameBase.View.Component
 
         public Sprite GetCardSprite(int id)
         {
-            return cardSpritesMap[id];
+            var colorPoint = Common.Core.Poker.Helper.GetColorPoint(id);
+            return cardSpritesMap[colorPoint];
         }
 
         public Sprite GetAIPlayerHeadIconSprite(int id)

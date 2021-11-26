@@ -29,6 +29,33 @@ namespace GameBase.View.Poker
             ClearCards(CardType.All);
         }
 
+        public void SetCardsSortFunc(CardType type, System.Comparison<int> sortFunc)
+        {
+            switch (type)
+            {
+                case CardType.All:
+                    MyPokerCards.AddSortFunc(sortFunc);
+                    CenterPokerCards.AddSortFunc(sortFunc);
+                    foreach (var l in ThrownPokerCards)
+                    {
+                        l.AddSortFunc(sortFunc);
+                    }
+                    break;
+                case CardType.MyHandCard:
+                    MyPokerCards.AddSortFunc(sortFunc);
+                    break;
+                case CardType.CenterCards:
+                    CenterPokerCards.AddSortFunc(sortFunc);
+                    break;
+                case CardType.ThrownCards:
+                    foreach (var l in ThrownPokerCards)
+                    {
+                        l.AddSortFunc(sortFunc);
+                    }
+                    break;
+            }
+        }
+
         public void ClearCards(CardType type)
         {
             switch (type)

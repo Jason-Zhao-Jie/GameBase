@@ -160,8 +160,17 @@ namespace GameBase.Present.Poker.Huolong
 
         public void OnResponse(GameOperationEvent _event, GameOperationResponse response)
         {
-            Common.PlatformInterface.Base.DebugError("Unknown Operation Response received by Huolong AI player, player:" + PlayerIndex + ", operation code:" + (int)_event + ", response code:" + (int)response);
-        }
+            switch (_event)
+            {
+                case GameOperationEvent.ShowStar:
+                case GameOperationEvent.LastCardsThrow:
+                case GameOperationEvent.CardsThrew:
+                    break;
+                default:
+                    Common.PlatformInterface.Base.DebugError("Unknown Operation Response received by Huolong AI player, player:" + PlayerIndex + ", operation code:" + (int)_event + ", response code:" + (int)response);
+                    break;
+            }
+            }
 
         private IPlayerVector_Item vector;
         private GameSetting setting;
