@@ -33,8 +33,9 @@ namespace GameBase.Common.Model.Poker.Huolong
 
         public int LeadPlayer { get; private set; } = 0;
         public int CurrentPlayer { get; private set; } = 0;
-        public int ShowingPlayer { get; private set; } = 0;
+        public int ShowingPlayer { get; private set; } = -1;
         public int ShowedPlayer { get; private set; } = 0;
+        public int[] ShowedCards => showedCards;
         public int MainCardsCount => mainCardLayout.Count;
         public int ThrowNeedNum => roundCardLayout[LeadPlayer].Count;
         public int CurrentHandCardsNum => playerCardLayout[LeadPlayer].Count;
@@ -110,8 +111,16 @@ namespace GameBase.Common.Model.Poker.Huolong
             RoundIndex = 0;
             LeadPlayer = MainPlayer;
             CurrentPlayer = MainPlayer;
-            ShowingPlayer = MainPlayer;
-            ShowedPlayer = MainPlayer;
+            if(matchIndex == 0)
+            {
+                ShowingPlayer = -1;
+                ShowedPlayer = -1;
+            }
+            else
+            {
+                ShowingPlayer = MainPlayer;
+                ShowedPlayer = MainPlayer;
+            }
             score = new int[settings.campNum];
             showingCards = new int[0];
             showedCards = new int[0];
@@ -269,22 +278,23 @@ namespace GameBase.Common.Model.Poker.Huolong
             return GameOperationResponse.Success;
         }
 
-        public bool ShowJokerResult(int player, int card)
+        public int[] ShowJokerResult(int player, int card)
         {
             if (player != ShowingPlayer || showingCards.Length == 0)
             {
-                return false;
+                return null;
             }
             var newCards = new int[showingCards.Length + 1];
             for (var i = 0; i < showingCards.Length; ++i)
             {
                 newCards[i] = showingCards[i];
             }
-            newCards[showedCards.Length] = card;
+            newCards[showingCards.Length] = card;
             var color = Core.Poker.Helper.GetColor(card);
             if (color == CardColor.Joker)
             {
                 showingCards = newCards;
+                return showedCards;
             }
             else
             {
@@ -294,8 +304,8 @@ namespace GameBase.Common.Model.Poker.Huolong
                 ShowingPlayer = -1;
                 switch (settings.mainColorGetWay)
                 {
-                    case MainColorGetWay.FirstMatchShowMain:
-                    case MainColorGetWay.EveryMatchShowMain:
+                    case MainColorGetWay.FirstMatchShowStar:
+                    case MainColorGetWay.EveryMatchShowStar:
                         MainColor = color;
                         if (MatchIndex == 0)
                         {
@@ -304,9 +314,8 @@ namespace GameBase.Common.Model.Poker.Huolong
                         }
                         break;
                 }
+                return showedCards;
             }
-            // 返回 true 后, 通过判断新的 showedPlayer 判断是亮王成功还是继续加亮
-            return true;
         }
 
         /// <summary>

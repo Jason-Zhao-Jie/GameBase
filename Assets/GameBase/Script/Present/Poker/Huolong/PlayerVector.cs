@@ -103,6 +103,7 @@ namespace GameBase.Present.Poker.Huolong
                     if (msg.isNotice)
                     {
                         var code = (GameNoticeEvent)msg.code;
+                        Common.PlatformInterface.Base.DebugInfo(string.Format("got player update info. playerIndex:{0}, msgCode:{1}", PlayerIndex, msg.code));
                         switch (code)
                         {
                             case GameNoticeEvent.StartGame:
@@ -121,7 +122,7 @@ namespace GameBase.Present.Poker.Huolong
                                 playerItem.OnPlayerShow((msg.data[0] as int[])[0], msg.data[1] as int[]);
                                 break;
                             case GameNoticeEvent.PlayerShowedStar:
-                                playerItem.OnPlayerShowResult((msg.data[0] as int[])[0], msg.data[1] as int[], (msg.data[0] as int[])[2]);
+                                playerItem.OnPlayerShowResult((msg.data[0] as int[])[0], msg.data[1] as int[]);
                                 break;
                             case GameNoticeEvent.MatchAborted_NobodyShowed:
                                 playerItem.OnMatchAborted();

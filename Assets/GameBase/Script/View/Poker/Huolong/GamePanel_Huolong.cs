@@ -43,7 +43,16 @@ namespace GameBase.View.Poker.Huolong
 
         public void OnResponse(GameOperationEvent _event, GameOperationResponse response)
         {
-            Common.PlatformInterface.Base.DebugError("Unknown Operation Response received by Huolong local player, player:" + PlayerIndex + ", operation code:" + (int)_event + ", response code:" + (int)response);
+            switch (_event)
+            {
+                case GameOperationEvent.ShowStar:
+                case GameOperationEvent.LastCardsThrow:
+                case GameOperationEvent.CardsThrew:
+                    break;
+                default:
+                    Common.PlatformInterface.Base.DebugError("Unknown Operation Response received by Huolong local player, player:" + PlayerIndex + ", operation code:" + (int)_event + ", response code:" + (int)response);
+                    break;
+            }
         }
 
         public void OnGameStart()
@@ -144,11 +153,11 @@ namespace GameBase.View.Poker.Huolong
             UpdatePokerWorldSortFunc();
         }
 
-        public void OnPlayerShowResult(int player, int[] jokers, int target)
+        public void OnPlayerShowResult(int player, int[] cards)
         {
             int relativeIndex = GetPlayerRelativeIndex(player);
             PokerWorld.ClearCards(WorldPokerManager.CardType.ThrownCards);
-            PokerWorld.AddThrownCards(relativeIndex, jokers, target);
+            PokerWorld.AddThrownCards(relativeIndex, cards);
             int headIndex = headIndexes[setting.playerNum][relativeIndex];
             var head = heads[headIndex];
             head.IsMain = Model.MainPlayer == player;
@@ -502,7 +511,7 @@ namespace GameBase.View.Poker.Huolong
             {
                 return HuolongHelper.CompareAsLastCards(a, b, Model.MainColor, Model.MainPoint, Model.OftenMainPoint);
             });
-            PokerWorld.SetCardsSortFunc(WorldPokerManager.CardType.MyHandCard, (int a, int b) =>
+            PokerWorld.SetCardsSortFunc(WorldPokerManager.CardType.ThrownCards, (int a, int b) =>
             {
                 return HuolongHelper.CompareAsHandCard(a, b, Model.MainColor, Model.MainPoint, Model.OftenMainPoint);
             });

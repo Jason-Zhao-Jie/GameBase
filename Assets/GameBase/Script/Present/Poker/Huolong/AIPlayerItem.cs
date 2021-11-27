@@ -58,7 +58,7 @@ namespace GameBase.Present.Poker.Huolong
         {
         }
 
-        public void OnPlayerShowResult(int player, int[] jokers, int target)
+        public void OnPlayerShowResult(int player, int[] cards)
         {
         }
 
@@ -170,7 +170,7 @@ namespace GameBase.Present.Poker.Huolong
                     Common.PlatformInterface.Base.DebugError("Unknown Operation Response received by Huolong AI player, player:" + PlayerIndex + ", operation code:" + (int)_event + ", response code:" + (int)response);
                     break;
             }
-            }
+        }
 
         private IPlayerVector_Item vector;
         private GameSetting setting;

@@ -9,7 +9,7 @@ namespace GameBase.Common.Interface.Poker.Huolong
         public void OnGetOneCard(int card);
         public void OnGetAllCards(int[] cards);
         public void OnPlayerShow(int player, int[] cards);
-        public void OnPlayerShowResult(int player, int[] jokers, int target);
+        public void OnPlayerShowResult(int player, int[] cards);
         public void OnMatchAborted();
         public void OnAskForLastCards(int[] mainPlayerLastCards);
         public void OnLastCardsOver(Core.Poker.Huolong.LastCardsReport report);

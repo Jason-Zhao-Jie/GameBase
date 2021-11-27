@@ -243,7 +243,7 @@ namespace GameBase.Present.Poker.Huolong
             {
                 for (int i = 0; i < model.Setting.playerNum; ++i)
                 {
-                    players[i].Notice(GameNoticeEvent.PlayerShowingStar, new int[] { player }, model.GetPlayerCardLayout(player).GetAll());
+                    players[i].Notice(GameNoticeEvent.PlayerShowingStar, new int[] { player }, model.ShowedCards);
                 }
             }
         }
@@ -355,20 +355,21 @@ namespace GameBase.Present.Poker.Huolong
                             players[p].Notice<int[]>(GameNoticeEvent.GiveOneCard, new int[] { card });
                             if(!model.IsShowMainPoint && model.ShowingPlayer == p)
                             {
-                                if(model.ShowJokerResult(p, card))
+                                var showResult = model.ShowJokerResult(p, card);
+                                if (showResult != null)
                                 {
                                     if (model.ShowingPlayer == p)
                                     {
                                         for (int i = 0; i < model.Setting.playerNum; ++i)
                                         {
-                                            players[i].Notice(GameNoticeEvent.PlayerShowingStar, new int[] { player }, model.GetPlayerCardLayout(player).GetAll());
+                                            players[i].Notice(GameNoticeEvent.PlayerShowingStar, new int[] { player }, showResult);
                                         }
                                     }
                                     else
                                     {
                                         for (int i = 0; i < model.Setting.playerNum; ++i)
                                         {
-                                            players[i].Notice(GameNoticeEvent.PlayerShowedStar, new int[] { player }, model.GetPlayerCardLayout(player).GetAll(), new int[] { card });
+                                            players[i].Notice(GameNoticeEvent.PlayerShowedStar, new int[] { player }, showResult);
                                         }
                                     }
                                 }

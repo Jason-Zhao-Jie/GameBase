@@ -35,9 +35,13 @@ namespace GameBase.View.Poker.Huolong
             {
                 for (int i=0;i<btns.Length;++i)
                 {
-                    btns[i].SetActive(buttons.Length > i && buttons[i].btnText != null);
-                    texts[i].text = buttons[i].btnText;
-                    callbacks[i] = buttons[i].callback;
+                    bool show = buttons.Length > i && buttons[i].btnText != null;
+                    btns[i].SetActive(show);
+                    if (show)
+                    {
+                        texts[i].text = buttons[i].btnText;
+                        callbacks[i] = buttons[i].callback;
+                    }
                 }
             }
         }
